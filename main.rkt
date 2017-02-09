@@ -16,9 +16,9 @@
 
 ;~~~~~~~~~~~~FUNCTIONS~~~~~~~~~~~~~~~~~~~
 ;Single var:
-; (bisection num-iterations (process-string input-string))
-; (fixed-point num-iterations (process-string input-string))
-; (newtons-method num-iterations (process-string input-string))
+; (bisection num-iterations initial-guess (process-string input-string))
+; (fixed-point num-iterations initial-guess (process-string input-string))
+; (newtons-method num-iterations initial-guess (process-string input-string))
 ;Systems:
 ; (gaussian-elim (process-string input-string))
 ; (lu-decomp (process-string input-string))

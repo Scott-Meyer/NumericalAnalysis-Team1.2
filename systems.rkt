@@ -1,5 +1,6 @@
 #lang racket
-(require math/bigfloat)
+(require math/bigfloat
+         "functions.rkt")
 
 (provide gaussian-elim
          lu-decomp
