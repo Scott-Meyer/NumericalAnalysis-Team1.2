@@ -31,9 +31,6 @@
 ; Make a frame by instantiating the frame% class
 (define frame (new frame% [label "Group 1.2 Numerical Analysis Project"]))
  
-; Show the frame by calling its show method
-(send frame show #t)
-
 ; Make a static text message in the frame
 (define msg (new message% [parent frame]
                           [label "No events so far..."]))
@@ -44,3 +41,6 @@
              ; Callback procedure for a button click:
              [callback (lambda (button event)
                          (send msg set-label "Button click"))])
+
+; Show the frame by calling its show method
+(send frame show #t)
