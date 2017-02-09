@@ -16,16 +16,16 @@
 
 ;~~~~~~~~~~~~FUNCTIONS~~~~~~~~~~~~~~~~~~~
 ;Single var:
-; (bisection input-string)
-; (fixed-point input-string)
-; (newtons-method input-string)
+; (bisection num-iterations (process-string input-string))
+; (fixed-point num-iterations (process-string input-string))
+; (newtons-method num-iterations (process-string input-string))
 ;Systems:
-; (gaussian-elim input-string)
-; (lu-decomp input-string)
-; (jacobi input-string)
-; (sor input-string)
-; (multi-newtons input-string)
-; (broydens input-string)
+; (gaussian-elim (process-string input-string))
+; (lu-decomp (process-string input-string))
+; (jacobi (process-string input-string))
+; (sor (process-string input-string))
+; (multi-newtons (process-string input-string))
+; (broydens (process-string input-string))
 
 ;~~~~~~~~~~~~Jonathans GUI~~~~~~~~~~~~~~~
 ; Make a frame by instantiating the frame% class
@@ -33,3 +33,14 @@
  
 ; Show the frame by calling its show method
 (send frame show #t)
+
+; Make a static text message in the frame
+(define msg (new message% [parent frame]
+                          [label "No events so far..."]))
+ 
+; Make a button in the frame
+(new button% [parent frame]
+             [label "Click Me"]
+             ; Callback procedure for a button click:
+             [callback (lambda (button event)
+                         (send msg set-label "Button click"))])

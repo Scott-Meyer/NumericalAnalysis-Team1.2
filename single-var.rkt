@@ -6,16 +6,20 @@
          newtons-method)
 
 ;Scott
-(define (bisection input-string)
+(define (bisection num-iterations input-string)
   void
   )
 
 ;Scott
-(define (fixed-point input-string)
+(define (fixed-point num-iterations input-string)
   void
   )
 
 ;Brad
-(define (newtons-method input-string)
-  void
+(define (newtons-method num-iterations input-string)
+  (define ret 0)
+  (for ([x num-iterations])
+    
+    )
+  ret
   )
