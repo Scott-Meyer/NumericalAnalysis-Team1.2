@@ -30,9 +30,9 @@ Oral presentation with handouts, Use of program documentation, Tech support
     *   *Jonathan Trejo*
 *   Math 
     *   Kendra
-    *   Brad Dufrense
+    *   Xandon
 *   Test Cases 
-    *   Brand Dufrense
+    *   Xandon
     *   Jonathan Trejo
 *   Handouts
     *   Kendra
