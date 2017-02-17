@@ -7,11 +7,35 @@
          "single-var.rkt"
          "systems.rkt")
 
+(define (process-val word)
+  (if (equal? word "+")
+      '+
+      (if (equal? word "-")
+          '-
+          (list (bf (string->number (car (string-split word "x")))) 'x (if (equal? (length (string-split word "^")) 2) (bf (string->number (cadr (string-split word "^"))))
+                                                                           (if (string-contains? word "x") (bf 1) (bf 0))))
+          )
+      )
+  )
+
 ;This should process our user input into
 ;what we want to pass into our math functions
+;example output: 3x^2 + 2x - 7 --> (list (list 3 x 2) '+ (list 2 x 1) '- (list 7 x 0))
 (define (process-string input-string)
-  (define output-string input-string)
-  output-string
+  (define output-list (list))
+  (define word-start 0)
+  (define current-word "")
+  (for ([x input-string])
+    (if (and (equal? #\space x) (not (equal? (process-val current-word) "")))
+      (begin
+        (set! output-list (append output-list (list (process-val current-word))))
+        (set! current-word "")
+        )
+      (set! current-word (string-append current-word (string x)))
+      )
+    )
+  (set! output-list (append output-list (list (process-val current-word))))
+  output-list
   )
 
 ;~~~~~~~~~~~~FUNCTIONS~~~~~~~~~~~~~~~~~~~
