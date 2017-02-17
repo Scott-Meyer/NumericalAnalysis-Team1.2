@@ -24,8 +24,6 @@
   )
 
 (define (parse-value val x-val)
-  (printf "~a at ~a = " val x-val)
-  (printf "~a~n" (bf* (car val) (bfexpt x-val (caddr val))))
   (bf* (car val) (bfexpt x-val (caddr val)))
   )
 
@@ -33,7 +31,7 @@
   (define deriv-string '())
   (for ([val func-string])
     (when (list? val)
-      (define frst (bf/ (car val) (caddr val)))
+      (define frst  (bf* (car val) (caddr val)))
       (define scnd (cadr val))
       (define thrd (bf- (caddr val) (bf 1)))
       (set! deriv-string (append deriv-string (list (list frst scnd thrd))))
