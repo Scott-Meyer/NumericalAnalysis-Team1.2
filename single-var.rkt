@@ -23,8 +23,9 @@
 (define (newtons-method num-iterations initial-guess input-string)
   (define ret (bf initial-guess))
   ;(printf "0 iterations: ~a~n" ret)
+  (define deriv (derivative input-string))
   (for ([x num-iterations])
-    (set! ret (bf- ret (bf/ (apply-func input-string ret) (apply-func (derivative input-string) ret))))
+    (set! ret (bf- ret (bf/ (apply-func input-string ret) (apply-func deriv ret))))
     ;(printf "~a iterations: ~a~n" (add1 x) ret)
     )
   ret
