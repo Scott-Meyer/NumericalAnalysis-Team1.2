@@ -1,1 +1,0 @@
-("6.8" ("bbdf9802ad5673130920b2851048379c44be3a1e" . "7081f6d214e808e51b89976d36d434a79e68c45b") #"C:\\Users\\Penguin\\Dropbox\\UCD\\Numerical Analysis\\Project1\\NumericalAnalysis-Team1.2\\functions.rkt" (collects #"errortrace" #"errortrace-key.rkt") (collects #"math" #"bigfloat.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))
