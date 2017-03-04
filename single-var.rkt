@@ -19,8 +19,17 @@
   )
 
 ;Scott
+;example:
+;f(x)=1x^3, 8 iterations, .5 initial guess
+;(fixed-point 8 .5 (list (list (bf 1) 'x (bf 3))))
 (define (fixed-point num-iterations initial-guess input-string)
-  void
+  (define in (bf initial-guess))
+  (define (fx x) (apply-func input-string x))
+  (define (fixed-point-runner num-iterations x fx)
+    (if (or (> 1 num-iterations) (equal? x (fx x)))
+      x
+      (fixed-point-runner (- num-iterations 1) (fx x) fx)))
+  (fixed-point-runner num-iterations in fx)
   )
 
 ;Brad
