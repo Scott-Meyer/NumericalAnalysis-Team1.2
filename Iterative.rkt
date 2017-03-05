@@ -16,12 +16,12 @@
     (if (or (zero? num_iter) (converge? A))
         x
         (let ([x+1 (for/list ([i (range 0 (length A))])
-                     (let* ([θ (foldl (λ(j acc)
-                                        (if (not (equal? i x))
+                     (let ([σ (foldl (λ(j acc)
+                                        (if (not (equal? i j))
                                             (+ acc (* (list-ref (list-ref A i) j) (list-ref x j)))
                                             acc))
                                       0 (range 0 (length A)))])
-                       (* (/ 1 (list-ref (list-ref A i) i)) (- (list-ref b i) θ))))])
+                       (* (/ 1 (list-ref (list-ref A i) i)) (- (list-ref b i) σ))))])
           (jacobi* (- num_iter 1) A x+1 b))))
   (cond
     [(not (andmap (λ (x) (equal? (length A) (length x))) A)) (error "A not nXn")]
@@ -30,8 +30,23 @@
     [(not (diag-dom? A)) (error "A not diagonal dominant")]
     [else (jacobi* num_iter A x b)]))
 
+(define t2A '((16 3)
+              (7 -11)))
+(define t2b '(11 13))
+
 (define (sor num_iter A x b)
-  A)
+  (define (converge? A) #f)
+  (cond
+    [(< num_iter 1) x]
+    [(converge? A) x]
+    [else
+     (let ([Φ (for/list ([i (range 0 (length A))])
+                (let ([σ (foldl (λ(j acc) (if (not (equal? i j))
+                                              (+ acc (* (list-ref (list-ref A i) j) (list-ref x j)))
+                                              acc))
+                                0 (range 0 (length A)))])
+                (* (/ 1 (list-ref (list-ref A i) i)) (- (list-ref b i) σ))))])
+     (sor (- num_iter 1) A Φ b))]))
 
 ;Given a list and an Index, return that list with the index removed
 ;(delete-n '(a b c d) 1) -> '(a c d)
