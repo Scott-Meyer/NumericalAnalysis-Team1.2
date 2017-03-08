@@ -24,6 +24,9 @@
 (define / (lambda lst
             (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
             (apply bf/ lst)))
+(define expt (lambda lst
+            (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
+            (apply bfexpt lst)))
 
 ;do the order of the variables matter?
 (define (get-vars matrix)
@@ -113,7 +116,7 @@
     (if (equal? respect-to (list-ref val x))
         (begin
           (set! x (add1 x))
-          (set! ret (list-set ret 0 (bf* (list-ref ret 0) (bfexpt var-val (list-ref val x)))))
+          (set! ret (list-set ret 0 (* (list-ref ret 0) (expt var-val (list-ref val x)))))
           )
         (begin
           (set! ret (append ret (list (list-ref val x) (list-ref val (add1 x)))))
@@ -127,15 +130,15 @@
 (define (derive val respect-to) ;derivative of a single value (i.e. 7x^2y)
   (define contains-respect-to #false)
   (define deriv-ret (list (car val)))
-  (for ([x (in-range 1 (- (length val) 1) 2)])
+  (for ([x (in-range 1 (sub1 (length val)) 2)])
     (define var (list-ref val x))
     (set! x (add1 x))
     (define expo (list-ref val x))
     (if (equal? var respect-to)
         (begin
           (set! contains-respect-to #true)
-          (set! deriv-ret (list-set deriv-ret 0 (bf* (list-ref deriv-ret 0) expo)))
-          (set! deriv-ret (append deriv-ret (list var (bf- expo (bf 1)))))
+          (set! deriv-ret (list-set deriv-ret 0 (* (list-ref deriv-ret 0) expo)))
+          (set! deriv-ret (append deriv-ret (list var (- expo (bf 1)))))
           )
         (begin
           (set! deriv-ret (append deriv-ret (list var expo)))

@@ -37,7 +37,7 @@
 (define (negate-matrix m)
   (define ret (list))
   (for ([x (length m)])
-    (set! ret (append ret (list (list (list (bf* (list-ref (list-ref (list-ref m x) 0) 0) (bf -1)))))))
+    (set! ret (append ret (list (list (list (* (list-ref (list-ref (list-ref m x) 0) 0) (bf -1)))))))
     )
   ret
   )
@@ -46,7 +46,7 @@
 (define (add-to-guess guess addit)
   (define ret guess)
   (for ([x (length guess)])
-    (set! ret (list-set ret x (list (list-ref (list-ref guess x) 0) (bf+ (list-ref (list-ref guess x) 1) (list-ref (list-ref (list-ref addit x) 0) 0)))))
+    (set! ret (list-set ret x (list (list-ref (list-ref guess x) 0) (+ (list-ref (list-ref guess x) 1) (list-ref (list-ref (list-ref addit x) 0) 0)))))
     )
   ret
   )

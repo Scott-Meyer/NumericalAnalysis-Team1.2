@@ -42,7 +42,7 @@
   ;(printf "0 iterations: ~a~n" ret)
   (define deriv (derivative input-string 'x))
   (for ([x num-iterations])
-    (set! ret (bf- ret (bf/ (apply-func input-string (list (list 'x ret))) (apply-func deriv (list (list 'x ret))))))
+    (set! ret (- ret (/ (apply-func input-string (list (list 'x ret))) (apply-func deriv (list (list 'x ret))))))
     ;(printf "~a iterations: ~a~n" (add1 x) ret)
     )
   ret
