@@ -27,18 +27,19 @@
   (define current-word "")
   (for ([x input-string])
     (if (and (equal? #\space x) (not (equal? (process-val current-word) "")))
-      (begin
-        (set! output-list (append output-list (list (process-val current-word))))
-        (set! current-word "")
+        (begin
+          (set! output-list (append output-list (list (process-val current-word))))
+          (set! current-word "")
+          )
+        (set! current-word (string-append current-word (string x)))
         )
-      (set! current-word (string-append current-word (string x)))
-      )
     )
   (set! output-list (append output-list (list (process-val current-word))))
   output-list
   )
 
 ;~~~~~~~~~~~~FUNCTIONS~~~~~~~~~~~~~~~~~~~
+;TODO (update these)
 ;Single var:
 ; (bisection num-iterations initial-guess (process-string input-string))
 ; (fixed-point num-iterations initial-guess (process-string input-string))
@@ -62,13 +63,20 @@
 
 ;this for frame b-systems
 (define sys-frame (new frame%
+<<<<<<< HEAD
                    [label "Group 1.2 Numerical Analysis Project-Systems"]
                    [width 1000]
                    [height 600]))
+=======
+                       [label "Group 1.2 Numerical Analysis Project-Systems"]
+                       [width 1000]
+                       [height 600]))
+>>>>>>> refs/remotes/origin/Brads-functions
 
 
 ;interface for adding tabs to the frame of part a
 (define tab-panel (new tab-panel%
+<<<<<<< HEAD
               [parent frame]
               [choices (list "bisection num-iterations" "fixed-point num-iterations" "newtons-method num-iterations")]
               (callback
@@ -102,6 +110,41 @@
                                                    (list h-panel))))
                    ((5) (send tp change-children (lambda (children)
                                                    (list i-panel)))))))))
+=======
+                       [parent frame]
+                       [choices (list "bisection num-iterations" "fixed-point num-iterations" "newtons-method num-iterations")]
+                       (callback
+                        (lambda [tp e]
+                          (case [send tp get-selection]
+                            ;separates the differnt tabs and calls _-panel to fill each tab with info
+                            ((0) (send tp change-children (lambda (children)
+                                                            (list a-panel))))
+                            ((1) (send tp change-children (lambda (children)
+                                                            (list b-panel))))
+                            ((2) (send tp change-children (lambda (children)
+                                                            (list a-panel)))))))))
+
+;interface for adding tabs to the frame of part b
+(define sys-tab-panel (new tab-panel%
+                           [parent sys-frame]
+                           [choices (list "gaussian-elim" "lu-decomp" "jacobi" "sor" "multi-newtons" "broydens")]
+                           (callback
+                            (lambda [tp e]
+                              (case [send tp get-selection]
+                                ;separates the differnt tabs and calls _-panel to fill each tab with info
+                                ((0) (send tp change-children (lambda (children)
+                                                                (list d-panel))))
+                                ((1) (send tp change-children (lambda (children)
+                                                                (list e-panel))))
+                                ((2) (send tp change-children (lambda (children)
+                                                                (list f-panel))))
+                                ((3) (send tp change-children (lambda (children)
+                                                                (list g-panel))))
+                                ((4) (send tp change-children (lambda (children)
+                                                                (list h-panel))))
+                                ((5) (send tp change-children (lambda (children)
+                                                                (list i-panel)))))))))
+>>>>>>> refs/remotes/origin/Brads-functions
 
 
 ;each block defines the _-panel and creates the information within each tab
@@ -177,4 +220,11 @@
 ;will show two frames/windows for each part
 (send frame show #t)
 (send sys-frame show #t)
+<<<<<<< HEAD
 
+=======
+(send tab-panel change-children (lambda (children)
+                                  (list a-panel)))
+(send sys-tab-panel change-children (lambda (children)
+                                                                (list d-panel)))
+>>>>>>> refs/remotes/origin/Brads-functions
