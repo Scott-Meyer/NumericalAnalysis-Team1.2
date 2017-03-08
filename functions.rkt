@@ -4,7 +4,12 @@
 (provide jacobian
          apply-matrix
          apply-func
-         derivative)
+         derivative
+         +
+         -
+         *
+         /
+         get-vars)
 
 (define fp-op 0)
 (define + (lambda lst
@@ -38,9 +43,9 @@
   )
 
 ;example vector of functions:
-;(define V (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
-;                (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
-;                ))
+(define V (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
+                (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
+                ))
 ;(jacobian V)
 (define (jacobian matrix) ;returns the jacobian matrix of 'matrix'
   (define ret (list))
@@ -62,6 +67,7 @@
 ;                (list (list (list (bf 3) 'x (bf 7))) (list (list (bf 6) 'x (bf 3))) (list (list (bf 8) 'x (bf 1))))))
 ;(apply-matrix M (list (list 'x (bf 2))))
 (define (apply-matrix matrix var-vals) ;apply each variable value to each function in the matrix
+  ;(printf "apply-matrix~nmatrix: ~a~nvar-vals:~a~n" matrix var-vals)
   (define ret (list))
   (define current-row (list))
   (for ([row matrix])
@@ -87,8 +93,8 @@
             (set! current-val (parse-value current-val (cadr var) (car var)))
             )
           (case op
-            [(+) (set! ret (bf+ ret (car current-val)))]
-            [(-) (set! ret (bf- ret (car current-val)))]
+            [(+) (set! ret (+ ret (car current-val)))]
+            [(-) (set! ret (- ret (car current-val)))]
             )
           )
         (begin
@@ -103,7 +109,7 @@
 (define (parse-value val var-val respect-to) ;returns the value of 'val' with 'respect-to' replaced by 'var-val'
   ;(printf "parse ~a with var ~a = ~a~n" val respect-to var-val)
   (define ret (list (car val)))
-  (for ([x (in-range 1 (- (length val) 1) 2)])
+  (for ([x (in-range 1 (sub1 (length val)) 2)])
     (if (equal? respect-to (list-ref val x))
         (begin
           (set! x (add1 x))
