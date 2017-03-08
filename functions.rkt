@@ -6,12 +6,72 @@
          apply-func
          derivative)
 
-(define (jacobian matrix) ;returns the jacobian matrix of 'matrix'
-  void
+(define fp-op 0)
+(define + (lambda lst
+            (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
+            (apply bf+ lst)))
+(define - (lambda lst
+            (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
+            (apply bf- lst)))
+(define * (lambda lst
+            (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
+            (apply bf* lst)))
+(define / (lambda lst
+            (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
+            (apply bf/ lst)))
+
+;do the order of the variables matter?
+(define (get-vars matrix)
+  (define ret (list))
+  (for ([row matrix])
+    (for ([function row])
+      (for ([term (in-range 0 (length function) 2)])
+        (when (> (length (list-ref function term)) 1)
+          (unless (member (cadr (list-ref function term)) ret)
+            (set! ret (append ret (list (cadr (list-ref function term)))))
+            )
+          )
+        )
+      )
+    )
+  ret
   )
 
+;example vector of functions:
+;(define V (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
+;                (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
+;                ))
+;(jacobian V)
+(define (jacobian matrix) ;returns the jacobian matrix of 'matrix'
+  (define ret (list))
+  (define current-row (list))
+  (define vars (get-vars matrix))
+  (for ([row matrix])
+    (set! current-row (list))
+    (for ([var vars])
+      (set! current-row (append current-row (list (derivative (car row) var))))
+      )
+    (set! ret (append ret (list current-row)))
+    )
+  ret
+  )
+
+;example matrix of functions:
+;(define M (list (list (list (list (bf 1) 'x (bf 3))) (list (list (bf 1) 'x (bf 2))) (list (list (bf 1) 'x (bf 1))))
+;                (list (list (list (bf 2) 'x (bf 4))) (list (list (bf 5) 'x (bf 1))) (list (list (bf 7) 'x (bf 0))))
+;                (list (list (list (bf 3) 'x (bf 7))) (list (list (bf 6) 'x (bf 3))) (list (list (bf 8) 'x (bf 1))))))
+;(apply-matrix M (list (list 'x (bf 2))))
 (define (apply-matrix matrix var-vals) ;apply each variable value to each function in the matrix
-  matrix
+  (define ret (list))
+  (define current-row (list))
+  (for ([row matrix])
+    (set! current-row (list))
+    (for ([col row])
+      (set! current-row (append current-row (list (list (apply-func col var-vals)))))
+      )
+    (set! ret (append ret (list current-row)))
+    )
+  ret
   )
 
 ;ex. (apply-func (list (list (bf 1) 'x (bf 3)) '- (list (bf 1) 'x (bf 1)) '+ (list (bf 5) 'x (bf 2) 'y (bf 3))) (list (list 'x (bf 2)) (list 'y (bf 7))))
