@@ -52,6 +52,7 @@
 ; (broydens (process-string input-string))
 
 ;~~~~~~~~~~~~Jonathans GUI~~~~~~~~~~~~~~~
+
 ; Make a frame by instantiating the frame% class
 ;this frame for part a-Single Var 
 (define frame (new frame%
@@ -90,11 +91,17 @@
                  (case [send tp get-selection]
                    ;separates the differnt tabs and calls _-panel to fill each tab with info
                    ((0) (send tp change-children (lambda (children)
-                                                   (list a-panel))))
+                                                   (list d-panel))))
                    ((1) (send tp change-children (lambda (children)
-                                                   (list b-panel))))
+                                                   (list e-panel))))
                    ((2) (send tp change-children (lambda (children)
-                                                   (list a-panel)))))))))
+                                                   (list f-panel))))
+                   ((3) (send tp change-children (lambda (children)
+                                                   (list g-panel))))
+                   ((4) (send tp change-children (lambda (children)
+                                                   (list h-panel))))
+                   ((5) (send tp change-children (lambda (children)
+                                                   (list i-panel)))))))))
 
 
 ;each block defines the _-panel and creates the information within each tab
@@ -170,3 +177,4 @@
 ;will show two frames/windows for each part
 (send frame show #t)
 (send sys-frame show #t)
+
