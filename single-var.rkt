@@ -14,7 +14,7 @@
 (define (bisection num-iterations initial-guess input-string)
   (define in (list (bf (first initial-guess)) (bf (second initial-guess))))
   (define (fx x)
-    (apply-func input-string x))
+    (apply-func input-string (list (list 'x x))))
   (bisectionProcess num-iterations fx in)
   )
 
@@ -24,11 +24,11 @@
 ;(fixed-point 8 .5 (list (list (bf 1) 'x (bf 3))))
 (define (fixed-point num-iterations initial-guess input-string)
   (define in (bf initial-guess))
-  (define (fx x) (apply-func input-string x))
+  (define (fx x) (apply-func input-string (list (list 'x x))))
   (define (fixed-point-runner num-iterations x fx)
     (if (or (> 1 num-iterations) (equal? x (fx x)))
       x
-      (fixed-point-runner (- num-iterations 1) (fx x) fx)))
+      (fixed-point-runner (sub1 num-iterations) (fx x) fx)))
   (fixed-point-runner num-iterations in fx)
   )
 
