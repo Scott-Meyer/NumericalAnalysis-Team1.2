@@ -9,7 +9,9 @@
          -
          *
          /
-         get-vars)
+         get-vars
+         fp-op
+         reset-fp-op)
 
 (define fp-op 0)
 (define + (lambda lst
@@ -27,6 +29,10 @@
 (define expt (lambda lst
             (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
             (apply bfexpt lst)))
+
+(define (reset-fp-op)
+  (set! fp-op 0)
+  )
 
 ;do the order of the variables matter?
 (define (get-vars matrix)
