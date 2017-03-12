@@ -53,128 +53,79 @@
 
 ;~~~~~~~~~~~~Jonathans GUI~~~~~~~~~~~~~~~
 
-; Make a frame by instantiating the frame% class
-;this frame for part a-Single Var 
-(define frame (new frame%
+;/////////part a////////////////
+;bisection num-iterations frame
+(define bisection-frame (new frame%
                    [label "Group 1.2 Numerical Analysis Project-Single Var"]
                    [width 1000]
                    [height 600]))
 
-;this for frame b-systems
-(define sys-frame (new frame%
-                   [label "Group 1.2 Numerical Analysis Project-Systems"]
+(define bis-in (new text-field%
+                    [label "Number of iterations"]
+                    [parent bisection-frame]
+                    ))
+(define bis-in1 (new text-field%
+                     [label "list"]
+                     [parent bisection-frame]))
+
+
+
+
+;fixed-point num-iterations frame
+(define fixed-point-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
+
+;newtons-method num-iterations tab
+(define newtons-method-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
                    [width 1000]
                    [height 600]))
 
 
-;interface for adding tabs to the frame of part a
-(define tab-panel (new tab-panel%
-              [parent frame]
-              [choices (list "bisection num-iterations" "fixed-point num-iterations" "newtons-method num-iterations")]
-              (callback
-               (lambda [tp e]
-                 (case [send tp get-selection]
-                   ;separates the differnt tabs and calls _-panel to fill each tab with info
-                   ((0) (send tp change-children (lambda (children)
-                                                   (list a-panel))))
-                   ((1) (send tp change-children (lambda (children)
-                                                   (list b-panel))))
-                   ((2) (send tp change-children (lambda (children)
-                                                   (list a-panel)))))))))
-
-;interface for adding tabs to the frame of part b
-(define sys-tab-panel (new tab-panel%
-              [parent sys-frame]
-              [choices (list "gaussian-elim" "lu-decomp" "jacobi" "sor" "multi-newtons" "broydens")]
-              (callback
-               (lambda [tp e]
-                 (case [send tp get-selection]
-                   ;separates the differnt tabs and calls _-panel to fill each tab with info
-                   ((0) (send tp change-children (lambda (children)
-                                                   (list d-panel))))
-                   ((1) (send tp change-children (lambda (children)
-                                                   (list e-panel))))
-                   ((2) (send tp change-children (lambda (children)
-                                                   (list f-panel))))
-                   ((3) (send tp change-children (lambda (children)
-                                                   (list g-panel))))
-                   ((4) (send tp change-children (lambda (children)
-                                                   (list h-panel))))
-                   ((5) (send tp change-children (lambda (children)
-                                                   (list i-panel)))))))))
-
-
-;each block defines the _-panel and creates the information within each tab
-
-;part a
-;bisection num-iterations tab
-(define a-panel (new panel%
-                     [parent tab-panel]))
-(define a-text (new message%
-                    [parent a-panel]
-                    [label "This is the first panel"]))
-
-;fixed-point num-iterations tab
-(define b-panel (new panel%
-                     [parent tab-panel]))
-(define b-text (new message%
-                    [parent b-panel]
-                    [label "This is the second panel"]))
-
-;newtons-method num-iterations tab
-(define c-panel (new panel%
-                     [parent tab-panel]))
-(define c-text (new message%
-                    [parent c-panel]
-                    [label "This is the third panel"]))
-
-
-;part b
+;////////part b///////////
 ;gaussian-elim
-(define d-panel (new panel%
-                     [parent sys-tab-panel]))
-(define d-text (new message%
-                    [parent d-panel]
-                    [label "This is the first panel"]))
+(define gaussian-elim-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
 
 ;lu-decomp
-(define e-panel (new panel%
-                     [parent sys-tab-panel]))
-(define e-text (new message%
-                    [parent e-panel]
-                    [label "This is the second panel"]))
+(define lu-decomp-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
 
-;jacobi " "sor" "multi-newtons" "broydens
-(define f-panel (new panel%
-                     [parent sys-tab-panel]))
-(define f-text (new message%
-                    [parent f-panel]
-                    [label "This is the third panel"]))
+;jacobi
+(define jacobi-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
 
-;sor" "multi-newtons" "broydens
-(define g-panel (new panel%
-                     [parent sys-tab-panel]))
-(define g-text (new message%
-                    [parent g-panel]
-                    [label "This is the fourth panel"]))
+;sor
+(define sor-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
 
 ;multi-newtons
-(define h-panel (new panel%
-                     [parent sys-tab-panel]))
-(define h-text (new message%
-                    [parent h-panel]
-                    [label "This is the fifth panel"]))
+(define multi-newtons-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
 
 ;broydens
-(define i-panel (new panel%
-                     [parent sys-tab-panel]))
-(define i-text (new message%
-                    [parent i-panel]
-                    [label "This is the sixth panel"]))
+(define broydens-frame (new frame%
+                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [width 1000]
+                   [height 600]))
+
+
+
 
 
 ; Show the frame by calling its show method
-;will show two frames/windows for each part
-(send frame show #t)
-(send sys-frame show #t)
+(send bisection-frame show #t)
 
+;(bisection 3 (list 0 1) (list (list (bf 1) 'x (bf 5)) '+ (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'x 0.bf)))
