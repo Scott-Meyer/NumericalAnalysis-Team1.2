@@ -255,7 +255,10 @@
                            (define init-right (string->number (send (send bis-init-guess-right get-editor) get-text)))
                            (define in-string (send (send bis-equation get-editor) get-text))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
-                           (send bis-result set-value (bigfloat->string result))
+                           (send bis-result set-value (bigfloat->string (first result)))
+                           (send bis-iter set-value (bigfloat->string (list-ref result 1)))
+                           (send bis-fpops set-value (bigfloat->string (list-ref result 2)))
+                           (send bis-time set-value (string-append (bigfloat->string (list-ref result 3)) "ms"))
                            ))))
 (define bis-right (new vertical-panel%
                        [parent bisection-split]
@@ -264,6 +267,15 @@
 (define bis-result (new text-field%
                         [parent bis-right]
                         [label "results"]))
+(define bis-iter (new text-field%
+                      [parent bis-right]
+                      [label "Number of iterations"]))
+(define bis-fpops (new text-field%
+                       [parent bis-right]
+                       [label "Floating Point Operations"]))
+(define bis-time (new text-field%
+                      [parent bis-right]
+                      [label "Execution Time"]))
 
 ;fixed-point num-iterations tab
 (define b-panel (new panel%
