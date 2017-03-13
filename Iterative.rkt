@@ -4,10 +4,10 @@
 (define tx '(1 1))
 (define tb '(11 13))
 
-(provide jacobian
+(provide jacobiSc
          sorSc)
 
-(define (jacobian num_iter A x b)
+(define (jacobiSc num_iter A x b)
   (define (diag-dom? A)
     (let* ([diag-index (range 0 (length A))])
       (andmap >
