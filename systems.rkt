@@ -1,6 +1,9 @@
 #lang racket
 (require math/bigfloat
-         "functions.rkt")
+         "functions.rkt"
+         "Gaussian.rkt"
+         "lu_decomposition.rkt"
+         "Iterative.rkt")
 
 (provide gaussian-elim
          lu-decomp
@@ -10,23 +13,33 @@
          broydens)
 
 ;Scott
-(define (gaussian-elim Aug) ;returns x in Ax=b
-  Aug
+;;returns x in Ax=b
+; Takes A b (A = '((1 2)(3 4)) b='(8 9))
+(define (gaussian-elim A b) 
+  (define AB (map (λ(Ar bx) (append Ar (list bx))) A b))
+  (map last (gaus AB))
   )
 
-;Scott
+;Scott given A, return LUA in PA=LU,
+;(lu-decomp '((1 3 5)(2 4 7)(1 1 0)))
+;(A of the form '(((1 0 0) (.5 1 0) (.5 -1 1)) ((2 4 7) (0 1 1.5) (0 0 -2)) ((0 1 0) (1 0 0) (0 0 1)))
+;return is form '(L U A)
 (define (lu-decomp input-string)
-  void
+  (LU_Decomposition input-string)
   )
 
-;Scott
-(define (jacobi input-string)
-  void
+;Scott given Ax=b (with initial guesses for x) return x
+;(jacobi 10 '((2 1)(5 7)) '(1 1) '(11 13))
+;(jacobi iter A x b
+;returns final b '(7.3 8.8)
+(define (jacobi num_iter A x b)
+  (jacobiSc num_iter A x b)
   )
 
-;Scott
-(define (sor input-string)
-  void
+;Scott given Ax=b (with initial guesses for x) return x
+;everything here is the same as jacobi, its just a different implementation
+(define (sor num_iter A x b)
+  (sorSc num_iter A x b)
   )
 
 ;(define g (list (list (list (bf 1)))

@@ -4,7 +4,10 @@
 (define tx '(1 1))
 (define tb '(11 13))
 
-(define (jacobi num_iter A x b)
+(provide jacobiSc
+         sorSc)
+
+(define (jacobiSc num_iter A x b)
   (define (diag-dom? A)
     (let* ([diag-index (range 0 (length A))])
       (andmap >
@@ -34,7 +37,7 @@
               (7 -11)))
 (define t2b '(11 13))
 
-(define (sor num_iter A x b)
+(define (sorSc num_iter A x b)
   (define (converge? A) #f)
   (cond
     [(< num_iter 1) x]
@@ -46,7 +49,7 @@
                                               acc))
                                 0 (range 0 (length A)))])
                 (* (/ 1 (list-ref (list-ref A i) i)) (- (list-ref b i) σ))))])
-     (sor (- num_iter 1) A Φ b))]))
+     (sorSc (- num_iter 1) A Φ b))]))
 
 ;Given a list and an Index, return that list with the index removed
 ;(delete-n '(a b c d) 1) -> '(a c d)

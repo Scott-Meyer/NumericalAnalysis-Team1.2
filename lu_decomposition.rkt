@@ -4,6 +4,8 @@
              (2 4 7)
              (1 1 0)))
 
+(provide LU_Decomposition)
+
 ;;Logic and definition (for LU_Decomposition) copied from
 ;;http://rosettacode.org/wiki/LU_decomposition#Python
 (define (LU_Decomposition A)
