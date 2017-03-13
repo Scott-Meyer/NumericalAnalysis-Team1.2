@@ -1,15 +1,14 @@
 #lang racket
 (require math/array)
 
-(define t (mutable-array #[#[2 -2 -1 -2]
-                           #[4 1 -2 1]
-                           #[-2 1 -2 -3]]))
-(define (row-count A)
-  (vector-ref (array-shape A) 0))
-(define (col-count A)
-  (vector-ref (array-shape A) 1))
+(provide gaus)
 
-(define (gaus A)
+(define (gaus iA)
+  (define A (list*->array iA byte?))
+  (define (row-count A)
+  (vector-ref (array-shape A) 0))
+  (define (col-count A)
+    (vector-ref (array-shape A) 1))
   (define (gausdown a b)
     (if (not (or (>= a (row-count A)) (>= b (col-count A))))
         (let ([Aab (array-ref A (vector a b))])
@@ -32,7 +31,8 @@
         empty))
   (begin
     (gausdown 0 0)
-    (gausup (- (row-count A) 2) (- (col-count A) 2))))
+    (gausup (- (row-count A) 2) (- (col-count A) 2)))
+  (array->list* A))
 
 ;(define (gaus A)
 ;  (define (gaussdown a b)
