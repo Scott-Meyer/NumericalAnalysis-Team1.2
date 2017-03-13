@@ -15,8 +15,11 @@
 ;Scott
 ;;returns x in Ax=b
 ; Takes A b (A = '((1 2)(3 4)) b='(8 9))
-(define (gaussian-elim A b) 
-  (define AB (map (λ(Ar bx) (append Ar (list bx))) A b))
+(define (gaussian-elim A b)
+  (printf "input ~a ~a" A b)
+  (define fA (map flatten A))
+  (define fb (flatten b))
+  (define AB (map (λ(Ar bx) (append Ar (list bx))) fA fb))
   (map last (gaus AB))
   )
 

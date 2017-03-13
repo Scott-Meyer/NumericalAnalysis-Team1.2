@@ -1,10 +1,21 @@
 #lang racket
-(require math/array)
+(require math/array
+         math/bigfloat)
 
 (provide gaus)
 
+(define tA (list (list (bf 1) (bf 6) (bf 7))
+                 (list (bf -2) (bf -7) (bf -5))))
+
+
+(define tst '(((1) (2) (5))
+  ((3) (3) (2))))
+
+(define zero (bf 0))
+(define one (bf 1))
+
 (define (gaus iA)
-  (define A (list*->array iA byte?))
+  (define A (list*->array iA bigfloat?))
   (define (row-count A)
   (vector-ref (array-shape A) 0))
   (define (col-count A)
@@ -13,11 +24,11 @@
     (if (not (or (>= a (row-count A)) (>= b (col-count A))))
         (let ([Aab (array-ref A (vector a b))])
           (begin (for* ([i (in-range b (col-count A))])
-                   (array-set! A (vector a i) (/ (array-ref A (vector a i)) Aab)))
+                   (array-set! A (vector a i) (bf/ (array-ref A (vector a i)) Aab)))
                  (for* ([i (in-range (+ a 1) (row-count A))])
                    (let ([Aib (array-ref A (vector i b))])
                      (for* ([j (in-range b (col-count A))])
-                       (array-set! A (vector i j) (- (array-ref A (vector i j)) (* (array-ref A (vector a j)) Aib))))))
+                       (array-set! A (vector i j) (bf- (array-ref A (vector i j)) (bf* (array-ref A (vector a j)) Aib))))))
                  (gausdown (+ a 1) (+ b 1))))
         empty))
   (define (gausup a b)
@@ -26,7 +37,7 @@
           (for* ([i (in-range a -1 -1)])
             (let ([Aib (array-ref A (vector i b))])
               (for* ([j (in-range 0 (col-count A))])
-                (array-set! A (vector i j) (- (array-ref A (vector i j)) (* (array-ref A (vector (+ a 1) j)) Aib))))))
+                (array-set! A (vector i j) (bf- (array-ref A (vector i j)) (bf* (array-ref A (vector (+ a 1) j)) Aib))))))
           (gausup (- a 1) (- b 1)))
         empty))
   (begin

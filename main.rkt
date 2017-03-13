@@ -383,38 +383,86 @@
                          [style '(border)]))
 (define gauss-main (new vertical-panel%
                         [parent gauss-split]
-                        [alignment '(center center)]
+                        [alignment '(left top)]
                         [style '(border)]))
-(define gauss-num-iter (new text-field%
-                            [label "Number of iterations:"]
-                            [parent gauss-main]
-                            ))
-(define gauss-init-guess (new text-field%
-                              [label "Initial guess:"]
-                              [parent gauss-main]
-                              ))
-(define gauss-equation (new text-field%
-                            [label "f(x)="]
-                            [parent gauss-main]
-                            ))
+(define gauss-slider (new slider%
+                             [label "Number of unknowns:"]
+                             [min-value 1]
+                             [max-value 6]
+                             [parent gauss-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send gauss-slider get-value))
+                                (set-dimensions gauss-result gauss-result-list val)
+                                (set-dimensions gauss-init-matrix gauss-matrix-vert val)
+                                (for ([x (length gauss-matrix-hor)])
+                                  (set-dimensions (list-ref gauss-matrix-vert x) (list-ref gauss-matrix-hor x) (+ val 1)))
+                                )
+                              )))
+(define gauss-matrix-lable (new message% [parent gauss-main] [label "Matrix:"]))
+(define gauss-init-matrix (new vertical-panel%
+                                  [parent gauss-main]
+                                  ))
+(define gauss-matrix-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent gauss-init-matrix])
+                               ))
+(define gauss-matrix-hor (for/list ([x gauss-matrix-vert])
+                              (for/list([y 7])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+
+                              
 (define gauss-submit (new button%
-                          [label "Submit"]
-                          [parent gauss-main]
-                          (callback
-                           (lambda (_ ...)
-                             (define num-iter (string->number (send (send gauss-num-iter get-editor) get-text)))
-                             (define init-guess (string->number (send (send gauss-init-guess get-editor) get-text)))
-                             (define in-string (send (send gauss-equation get-editor) get-text))
-                             (define result (newtons-method num-iter init-guess (process-string in-string)))
-                             (send gauss-result set-value (bigfloat->string result))
-                             ))))
+                             [label "Submit"]
+                             [parent gauss-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send gauss-slider get-value))
+                                (define init-matrix (for/list ([x val])
+                                                            (for/list ([y val])
+                                                              (bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) y) get-editor) get-text)))
+                                                              ))
+                                  )
+                                (define b (for/list ([x val])
+                                                 (list(bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) val) get-editor) get-text)))))
+                                  )
+                                                      
+                              
+                                (printf "(gaussian-elim ~a ~a)~n" init-matrix b)
+                                (define result (gaussian-elim init-matrix b))
+                                (printf "result: ~a~n" result)
+                                (for ([x val])
+                                  (send (list-ref gauss-result-list x) set-value (bigfloat->string  (list-ref result x)))
+                                  )
+                                void
+                                ))))
 (define gauss-right (new vertical-panel%
-                         [parent gauss-split]
-                         [style '(border)]
-                         [alignment '(center center)]))
-(define gauss-result (new text-field%
-                          [parent gauss-right]
-                          [label "results"]))
+                            [parent gauss-split]
+                            [style '(border)]
+                            [alignment '(center center)]))
+(define gauss-result-label (new message%
+                                   [parent gauss-right]
+                                   [label "results:"]))
+(define gauss-result (new vertical-panel%
+                             [parent gauss-right]
+                             ))
+(define gauss-result-list (for/list ([x 6])
+                               (new text-field%
+                                    [parent gauss-result]
+                                    [label (format "x~a=" (add1 x))]
+                                    [style '(single deleted)]
+                                    )))
+(set-dimensions gauss-init-matrix gauss-matrix-vert 1)
+(set-dimensions gauss-result gauss-result-list 1)
+(for ([x (length gauss-matrix-hor)])
+  (set-dimensions (list-ref gauss-matrix-vert x) (list-ref gauss-matrix-hor x) 2))
+
 
 ;lu-decomp
 (define e-panel (new panel%
