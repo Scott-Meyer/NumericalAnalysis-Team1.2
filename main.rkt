@@ -219,9 +219,12 @@
 
 (define bisection-split (new horizontal-panel%
                              [parent a-panel]
-                             [alignment '(left center)]))
+                             [alignment '(left center)]
+                             [style '(border)]))
 (define bisection-main (new vertical-panel%
-                            [parent bisection-split]))
+                            [parent bisection-split]
+                            [alignment '(center center)]
+                            [style '(border)]))
 (define bis-num-iter (new text-field%
                           [label "Number of iterations:"]
                           [parent bisection-main]
@@ -247,12 +250,15 @@
                            (define init-left (string->number (send (send bis-init-guess-left get-editor) get-text)))
                            (define init-right (string->number (send (send bis-init-guess-right get-editor) get-text)))
                            (define in-string (send (send bis-equation get-editor) get-text))
-                           (printf "(bisection ~a ~a ~a)~n" num-iter (list init-left init-right) (process-string in-string))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
-                           (send bis-other set-value (bigfloat->string result))
+                           (send bis-result set-value (bigfloat->string result))
                              ))))
-(define bis-other (new text-field%
-                   [parent bisection-split]
+(define bis-right (new vertical-panel%
+                       [parent bisection-split]
+                       [style '(border)]
+                       [alignment '(center center)]))
+(define bis-result (new text-field%
+                   [parent bis-right]
                    [label "results"]))
 
 ;fixed-point num-iterations tab
@@ -260,15 +266,90 @@
                      [parent tab-panel]))
 (define b-text (new message%
                     [parent b-panel]
-                    [label "This is the second panel"]))
+                    [label ""]))
+(define fix-split (new horizontal-panel%
+                             [parent b-panel]
+                             [alignment '(left center)]
+                             [style '(border)]))
+(define fix-main (new vertical-panel%
+                            [parent fix-split]
+                            [alignment '(center center)]
+                            [style '(border)]))
+(define fix-num-iter (new text-field%
+                          [label "Number of iterations:"]
+                          [parent fix-main]
+                          ))
+(define fix-init-guess (new text-field%
+                          [label "Initial guess:"]
+                          [parent fix-main]
+                          ))
+(define fix-equation (new text-field%
+                          [label "f(x)="]
+                          [parent fix-main]
+                          ))
+(define fix-submit (new button%
+                        [label "Submit"]
+                        [parent fix-main]
+                        (callback
+                         (lambda (_ ...)
+                           (define num-iter (string->number (send (send fix-num-iter get-editor) get-text)))
+                           (define init-guess (string->number (send (send fix-init-guess get-editor) get-text)))
+                           (define in-string (send (send fix-equation get-editor) get-text))
+                           (define result (fixed-point num-iter init-guess (process-string in-string)))
+                           (send fix-result set-value (bigfloat->string result))
+                             ))))
+(define fix-right (new vertical-panel%
+                       [parent fix-split]
+                       [style '(border)]
+                       [alignment '(center center)]))
+(define fix-result (new text-field%
+                   [parent fix-right]
+                   [label "results"]))
 
 ;newtons-method num-iterations tab
 (define c-panel (new panel%
                      [parent tab-panel]))
 (define c-text (new message%
                     [parent c-panel]
-                    [label "This is the third panel"]))
-
+                    [label ""]))
+(define newt-split (new horizontal-panel%
+                             [parent c-panel]
+                             [alignment '(left center)]
+                             [style '(border)]))
+(define newt-main (new vertical-panel%
+                            [parent newt-split]
+                            [alignment '(center center)]
+                            [style '(border)]))
+(define newt-num-iter (new text-field%
+                          [label "Number of iterations:"]
+                          [parent newt-main]
+                          ))
+(define newt-init-guess (new text-field%
+                          [label "Initial guess:"]
+                          [parent newt-main]
+                          ))
+(define newt-equation (new text-field%
+                          [label "f(x)="]
+                          [parent newt-main]
+                          ))
+(define newt-submit (new button%
+                        [label "Submit"]
+                        [parent newt-main]
+                        (callback
+                         (lambda (_ ...)
+                           (define num-iter (string->number (send (send newt-num-iter get-editor) get-text)))
+                           (define init-guess (string->number (send (send newt-init-guess get-editor) get-text)))
+                           (define in-string (send (send newt-equation get-editor) get-text))
+                           (define result (newtons-method num-iter init-guess (process-string in-string)))
+                           (send newt-result set-value (bigfloat->string result))
+                             ))))
+(define newt-right (new vertical-panel%
+                       [parent newt-split]
+                       [style '(border)]
+                       [alignment '(center center)]))
+(define newt-result (new text-field%
+                   [parent newt-right]
+                   [label "results"]))
 
 ;part b
 ;gaussian-elim
