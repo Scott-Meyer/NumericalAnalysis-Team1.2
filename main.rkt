@@ -57,25 +57,51 @@
 ;bisection num-iterations frame
 (define bisection-frame (new frame%
                    [label "Group 1.2 Numerical Analysis Project-Single Var"]
-                   [width 1000]
+                   [width 150]
                    [height 600]))
 
-(define bis-in (new text-field%
-                    [label "Number of iterations"]
-                    [parent bisection-frame]
-                    ))
-(define bis-in1 (new text-field%
-                     [label "list"]
-                     [parent bisection-frame]))
+(define tx1 (new text-field%
+     [label "here"]
+     [parent bisection-frame]))
+(define tx2 (new text-field%
+     [label "here"]
+     [parent bisection-frame]))
 
 
 
 
 ;fixed-point num-iterations frame
+;(fixed-point 5 0.5 (process-string "3x^2 + 2x - 7"))
+;    (fixed-point num-iterations initial-guess (process-string input-string))
 (define fixed-point-frame (new frame%
                    [label "Group 1.2 Numerical Analysis Project-Single Var"]
                    [width 1000]
                    [height 600]))
+(define msg (new message%
+                 [parent fixed-point-frame]
+                 [label "output"]))
+                
+
+(define f1 (new text-field%
+     [label "here"]
+     [parent fixed-point-frame]))
+
+
+(define tx4 (new button%
+     [label "there"]
+     [parent fixed-point-frame]
+     [callback (lambda (button event)
+                 (send msg set-label number->string(fixed-point 5 0.5 (process-string "3x^2 + 2x - 7"))))]))
+
+
+(fixed-point 5 0.5 (process-string "3x^2 + 2x - 7"))
+
+
+
+
+(send fixed-point-frame show #t)
+
+
 
 ;newtons-method num-iterations tab
 (define newtons-method-frame (new frame%
@@ -126,6 +152,6 @@
 
 
 ; Show the frame by calling its show method
-(send bisection-frame show #t)
+;(send bisection-frame show #t)
 
-;(bisection 3 (list 0 1) (list (list (bf 1) 'x (bf 5)) '+ (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'x 0.bf)))
+
