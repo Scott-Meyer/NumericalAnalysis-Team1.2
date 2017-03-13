@@ -60,9 +60,9 @@
   )
 
 ;Brad
-;(define sys (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
-;                  (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
-;                  ))
+(define sys (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
+                  (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
+                  ))
 ;ex. (multi-newtons 7 sys (list (list 'x (bf 1)) (list 'y (bf 2))))
 (define (multi-newtons num-iterations system guess)
   (define x guess)
@@ -180,9 +180,9 @@
   )
 
 ;Brad
-(define sys (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
-                  (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
-                  ))
+;(define sys (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
+;                  (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
+;                  ))
 ;ex. (broydens 5 sys  (list (list 'x (bf 1)) (list 'y (bf 2))) (identity (length (get-vars sys))))
 (define (broydens num-iterations system guesses init-matrix)
   (define x guesses)

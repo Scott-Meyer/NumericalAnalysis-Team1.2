@@ -50,6 +50,9 @@
                  (begin
                    (set! state 1)
                    (set! x (sub1 x))
+                   (when (equal? exponent 0) (set! exponent 1))
+                   (set! ret (append ret (list (bf exponent))))
+                   (set! exponent 0)
                    )
                  )
              )
@@ -79,6 +82,7 @@
     (when (equal? state 3)
       (set! ret (append ret (list (bf exponent))))
       )
+    (when (equal? state 2) (set! ret (append ret (list (bf 1)))))
     )
   ret
   )
@@ -230,13 +234,13 @@
                           [parent bisection-main]
                           ))
 (define bis-init-guess-left (new text-field%
-                          [label "Initial left bracket:"]
-                          [parent bisection-main]
-                          ))
+                                 [label "Initial left bracket:"]
+                                 [parent bisection-main]
+                                 ))
 (define bis-init-guess-right (new text-field%
-                          [label "Initial right bracket:"]
-                          [parent bisection-main]
-                          ))
+                                  [label "Initial right bracket:"]
+                                  [parent bisection-main]
+                                  ))
 (define bis-equation (new text-field%
                           [label "f(x)="]
                           [parent bisection-main]
@@ -252,14 +256,14 @@
                            (define in-string (send (send bis-equation get-editor) get-text))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
                            (send bis-result set-value (bigfloat->string result))
-                             ))))
+                           ))))
 (define bis-right (new vertical-panel%
                        [parent bisection-split]
                        [style '(border)]
                        [alignment '(center center)]))
 (define bis-result (new text-field%
-                   [parent bis-right]
-                   [label "results"]))
+                        [parent bis-right]
+                        [label "results"]))
 
 ;fixed-point num-iterations tab
 (define b-panel (new panel%
@@ -268,21 +272,21 @@
                     [parent b-panel]
                     [label ""]))
 (define fix-split (new horizontal-panel%
-                             [parent b-panel]
-                             [alignment '(left center)]
-                             [style '(border)]))
+                       [parent b-panel]
+                       [alignment '(left center)]
+                       [style '(border)]))
 (define fix-main (new vertical-panel%
-                            [parent fix-split]
-                            [alignment '(center center)]
-                            [style '(border)]))
+                      [parent fix-split]
+                      [alignment '(center center)]
+                      [style '(border)]))
 (define fix-num-iter (new text-field%
                           [label "Number of iterations:"]
                           [parent fix-main]
                           ))
 (define fix-init-guess (new text-field%
-                          [label "Initial guess:"]
-                          [parent fix-main]
-                          ))
+                            [label "Initial guess:"]
+                            [parent fix-main]
+                            ))
 (define fix-equation (new text-field%
                           [label "f(x)="]
                           [parent fix-main]
@@ -297,14 +301,14 @@
                            (define in-string (send (send fix-equation get-editor) get-text))
                            (define result (fixed-point num-iter init-guess (process-string in-string)))
                            (send fix-result set-value (bigfloat->string result))
-                             ))))
+                           ))))
 (define fix-right (new vertical-panel%
                        [parent fix-split]
                        [style '(border)]
                        [alignment '(center center)]))
 (define fix-result (new text-field%
-                   [parent fix-right]
-                   [label "results"]))
+                        [parent fix-right]
+                        [label "results"]))
 
 ;newtons-method num-iterations tab
 (define c-panel (new panel%
@@ -313,51 +317,104 @@
                     [parent c-panel]
                     [label ""]))
 (define newt-split (new horizontal-panel%
-                             [parent c-panel]
-                             [alignment '(left center)]
-                             [style '(border)]))
+                        [parent c-panel]
+                        [alignment '(left center)]
+                        [style '(border)]))
 (define newt-main (new vertical-panel%
-                            [parent newt-split]
-                            [alignment '(center center)]
-                            [style '(border)]))
-(define newt-num-iter (new text-field%
-                          [label "Number of iterations:"]
-                          [parent newt-main]
-                          ))
-(define newt-init-guess (new text-field%
-                          [label "Initial guess:"]
-                          [parent newt-main]
-                          ))
-(define newt-equation (new text-field%
-                          [label "f(x)="]
-                          [parent newt-main]
-                          ))
-(define newt-submit (new button%
-                        [label "Submit"]
-                        [parent newt-main]
-                        (callback
-                         (lambda (_ ...)
-                           (define num-iter (string->number (send (send newt-num-iter get-editor) get-text)))
-                           (define init-guess (string->number (send (send newt-init-guess get-editor) get-text)))
-                           (define in-string (send (send newt-equation get-editor) get-text))
-                           (define result (newtons-method num-iter init-guess (process-string in-string)))
-                           (send newt-result set-value (bigfloat->string result))
-                             ))))
-(define newt-right (new vertical-panel%
                        [parent newt-split]
-                       [style '(border)]
-                       [alignment '(center center)]))
+                       [alignment '(center center)]
+                       [style '(border)]))
+(define newt-num-iter (new text-field%
+                           [label "Number of iterations:"]
+                           [parent newt-main]
+                           ))
+(define newt-init-guess (new text-field%
+                             [label "Initial guess:"]
+                             [parent newt-main]
+                             ))
+(define newt-equation (new text-field%
+                           [label "f(x)="]
+                           [parent newt-main]
+                           ))
+(define newt-submit (new button%
+                         [label "Submit"]
+                         [parent newt-main]
+                         (callback
+                          (lambda (_ ...)
+                            (define num-iter (string->number (send (send newt-num-iter get-editor) get-text)))
+                            (define init-guess (string->number (send (send newt-init-guess get-editor) get-text)))
+                            (define in-string (send (send newt-equation get-editor) get-text))
+                            (define result (newtons-method num-iter init-guess (process-string in-string)))
+                            (send newt-result set-value (bigfloat->string result))
+                            ))))
+(define newt-right (new vertical-panel%
+                        [parent newt-split]
+                        [style '(border)]
+                        [alignment '(center center)]))
 (define newt-result (new text-field%
-                   [parent newt-right]
-                   [label "results"]))
+                         [parent newt-right]
+                         [label "results"]))
 
 ;part b
+
+(define (set-dimensions parent text-list dimen)
+  (for ([x (length text-list)])
+    (if (< x dimen)
+        (if (send (list-ref text-list x) is-shown?)
+            (begin
+              (send parent delete-child (list-ref text-list x))
+              (send parent add-child (list-ref text-list x)))
+            (send parent add-child (list-ref text-list x)))
+        (when (send (list-ref text-list x) is-shown?)
+          (send parent delete-child (list-ref text-list x)))
+        )
+    )
+  )
+
 ;gaussian-elim
 (define d-panel (new panel%
                      [parent sys-tab-panel]))
 (define d-text (new message%
                     [parent d-panel]
-                    [label "This is the first panel"]))
+                    [label ""]))
+(define gauss-split (new horizontal-panel%
+                         [parent d-panel]
+                         [alignment '(left center)]
+                         [style '(border)]))
+(define gauss-main (new vertical-panel%
+                        [parent gauss-split]
+                        [alignment '(center center)]
+                        [style '(border)]))
+(define gauss-num-iter (new text-field%
+                            [label "Number of iterations:"]
+                            [parent gauss-main]
+                            ))
+(define gauss-init-guess (new text-field%
+                              [label "Initial guess:"]
+                              [parent gauss-main]
+                              ))
+(define gauss-equation (new text-field%
+                            [label "f(x)="]
+                            [parent gauss-main]
+                            ))
+(define gauss-submit (new button%
+                          [label "Submit"]
+                          [parent gauss-main]
+                          (callback
+                           (lambda (_ ...)
+                             (define num-iter (string->number (send (send gauss-num-iter get-editor) get-text)))
+                             (define init-guess (string->number (send (send gauss-init-guess get-editor) get-text)))
+                             (define in-string (send (send gauss-equation get-editor) get-text))
+                             (define result (newtons-method num-iter init-guess (process-string in-string)))
+                             (send gauss-result set-value (bigfloat->string result))
+                             ))))
+(define gauss-right (new vertical-panel%
+                         [parent gauss-split]
+                         [style '(border)]
+                         [alignment '(center center)]))
+(define gauss-result (new text-field%
+                          [parent gauss-right]
+                          [label "results"]))
 
 ;lu-decomp
 (define e-panel (new panel%
@@ -366,14 +423,14 @@
                     [parent e-panel]
                     [label "This is the second panel"]))
 
-;jacobi " "sor" "multi-newtons" "broydens
+;jacobi
 (define f-panel (new panel%
                      [parent sys-tab-panel]))
 (define f-text (new message%
                     [parent f-panel]
                     [label "This is the third panel"]))
 
-;sor" "multi-newtons" "broydens
+;sor
 (define g-panel (new panel%
                      [parent sys-tab-panel]))
 (define g-text (new message%
@@ -385,7 +442,94 @@
                      [parent sys-tab-panel]))
 (define h-text (new message%
                     [parent h-panel]
-                    [label "This is the fifth panel"]))
+                    [label ""]))
+(define mnewt-split (new horizontal-panel%
+                         [parent h-panel]
+                         [alignment '(left center)]
+                         [style '(border)]))
+(define mnewt-main (new vertical-panel%
+                        [parent mnewt-split]
+                        [alignment '(center center)]
+                        [style '(border)]))
+(define mnewt-num-iter (new text-field%
+                            [label "Number of iterations:"]
+                            [parent mnewt-main]
+                            ))
+(define mnewt-slider (new slider%
+                          [label "Number of unknowns:"]
+                          [min-value 1]
+                          [max-value 10]
+                          [parent mnewt-main]
+                          (callback
+                           (lambda (_ ...)
+                             (define val (send mnewt-slider get-value))
+                             (set-dimensions mnewt-functions mnewt-functions-list val)
+                             (set-dimensions mnewt-init-guess mnewt-guess-list val)
+                             (set-dimensions mnewt-result mnewt-result-list val)
+                             )
+                           )))
+(define mnewt-functions (new vertical-panel%
+                             [parent mnewt-main]
+                             ))
+(define mnewt-functions-list (for/list ([x 20])
+                               (new text-field%
+                                    [parent mnewt-functions]
+                                    [label (format "f~a=" (add1 x))]
+                                    [style '(single deleted)]
+                                    )))
+(define mnewt-init-guess (new vertical-panel%
+                              [parent mnewt-main]
+                              ))
+(define mnewt-guess-list (for/list ([x 20])
+                           (new text-field%
+                                [parent mnewt-init-guess]
+                                [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
+                                [style '(single deleted)]
+                                )))
+(define mnewt-submit (new button%
+                          [label "Submit"]
+                          [parent mnewt-main]
+                          (callback
+                           (lambda (_ ...)
+                             (define num-iter (string->number (send (send mnewt-num-iter get-editor) get-text)))
+                             (define val (send mnewt-slider get-value))
+                             (define system (for/list ([x val])
+                                              (list(process-string (send (send (list-ref mnewt-functions-list x) get-editor) get-text))))
+                               )
+                             (define guess (for/list ([x val])
+                                             (list (string->symbol (format "~a" (integer->char (+ (char->integer #\a) x))))
+                                                   (bf (string->number (send (send (list-ref mnewt-guess-list x) get-editor) get-text)))
+                                                   )
+                                             )
+                               )
+                             (printf "(multi-newtons ~a ~a ~a)~n" num-iter system guess)
+                             (define result (multi-newtons num-iter system guess))
+                             (printf "result: ~a~n" result)
+                             (for ([x val])
+                               (send (list-ref mnewt-result-list x) set-value (bigfloat->string (cadr (list-ref result x))))
+                               )
+                             void
+                             ))))
+(define mnewt-right (new vertical-panel%
+                         [parent mnewt-split]
+                         [style '(border)]
+                         [alignment '(center center)]))
+(new message%
+     [parent mnewt-right]
+     [label "results:"])
+(define mnewt-result (new vertical-panel%
+                              [parent mnewt-right]
+                              ))
+(define mnewt-result-list (for/list ([x 20])
+                           (new text-field%
+                                [parent mnewt-result]
+                                [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
+                                [style '(single deleted)]
+                                )))
+
+(set-dimensions mnewt-functions mnewt-functions-list 1)
+(set-dimensions mnewt-init-guess mnewt-guess-list 1)
+(set-dimensions mnewt-result mnewt-result-list 1)
 
 ;broydens
 (define i-panel (new panel%
