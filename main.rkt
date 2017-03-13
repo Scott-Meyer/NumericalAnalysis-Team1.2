@@ -25,7 +25,7 @@
           )
         )
     )
-  (when (zero? coeff) (set! coeff 1))
+  (when (and (zero? coeff) (not (equal? rest ""))) (set! coeff 1))
   (set! coeff (bf coeff))
   (list coeff rest)
   )
@@ -514,18 +514,18 @@
                          [parent mnewt-split]
                          [style '(border)]
                          [alignment '(center center)]))
-(new message%
-     [parent mnewt-right]
-     [label "results:"])
+(define mnewt-result-label (new message%
+                                [parent mnewt-right]
+                                [label "results:"]))
 (define mnewt-result (new vertical-panel%
-                              [parent mnewt-right]
-                              ))
+                          [parent mnewt-right]
+                          ))
 (define mnewt-result-list (for/list ([x 20])
-                           (new text-field%
-                                [parent mnewt-result]
-                                [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
-                                [style '(single deleted)]
-                                )))
+                            (new text-field%
+                                 [parent mnewt-result]
+                                 [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
+                                 [style '(single deleted)]
+                                 )))
 
 (set-dimensions mnewt-functions mnewt-functions-list 1)
 (set-dimensions mnewt-init-guess mnewt-guess-list 1)
@@ -536,11 +536,129 @@
                      [parent sys-tab-panel]))
 (define i-text (new message%
                     [parent i-panel]
-                    [label "This is the sixth panel"]))
+                    [label ""]))
+(define broydens-split (new horizontal-panel%
+                            [parent i-panel]
+                            [alignment '(left center)]
+                            [style '(border)]))
+(define broydens-main (new vertical-panel%
+                           [parent broydens-split]
+                           [alignment '(center center)]
+                           [style '(border)]))
+(define broydens-num-iter (new text-field%
+                               [label "Number of iterations:"]
+                               [parent broydens-main]
+                               ))
+(define broydens-slider (new slider%
+                             [label "Number of unknowns:"]
+                             [min-value 1]
+                             [max-value 6]
+                             [parent broydens-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send broydens-slider get-value))
+                                (set-dimensions broydens-functions broydens-functions-list val)
+                                (set-dimensions broydens-init-guess broydens-guess-list val)
+                                (set-dimensions broydens-result broydens-result-list val)
+                                (set-dimensions broydens-init-matrix broydens-matrix-vert val)
+                                (for ([x (length broydens-matrix-hor)])
+                                  (set-dimensions (list-ref broydens-matrix-vert x) (list-ref broydens-matrix-hor x) val))
+                                )
+                              )))
+(define broydens-functions (new vertical-panel%
+                                [parent broydens-main]
+                                ))
+(define broydens-functions-list (for/list ([x 6])
+                                  (new text-field%
+                                       [parent broydens-functions]
+                                       [label (format "f~a=" (add1 x))]
+                                       [style '(single deleted)]
+                                       )))
+(define broydens-init-guess (new vertical-panel%
+                                 [parent broydens-main]
+                                 ))
+(define broydens-guess-list (for/list ([x 6])
+                              (new text-field%
+                                   [parent broydens-init-guess]
+                                   [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
+                                   [style '(single deleted)]
+                                   )))
+(define broydens-matrix-lable (new message% [parent broydens-main] [label "Initial Matrix:"]))
+(define broydens-init-matrix (new vertical-panel%
+                                  [parent broydens-main]
+                                  ))
+(define broydens-matrix-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent broydens-init-matrix])
+                               ))
+(define broydens-matrix-hor (for/list ([x broydens-matrix-vert])
+                              (for/list([y 6])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 1]
+                                     )
+                                )))
+                              
+
+(define broydens-submit (new button%
+                             [label "Submit"]
+                             [parent broydens-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define num-iter (string->number (send (send broydens-num-iter get-editor) get-text)))
+                                (define val (send broydens-slider get-value))
+                                (define system (for/list ([x val])
+                                                 (list(process-string (send (send (list-ref broydens-functions-list x) get-editor) get-text))))
+                                  )
+                                (define guess (for/list ([x val])
+                                                (list (string->symbol (format "~a" (integer->char (+ (char->integer #\a) x))))
+                                                      (bf (string->number (send (send (list-ref broydens-guess-list x) get-editor) get-text)))
+                                                      )
+                                                )
+                                  )
+                                (define init-matrix (for/list ([x val])
+                                                            (for/list ([y val])
+                                                              (car(process-string (send (send (list-ref (list-ref broydens-matrix-hor x) y) get-editor) get-text)))
+                                                              ))
+                                  )
+                                                      
+                              
+                                (printf "(broydens ~a ~a ~a ~a)~n" num-iter system guess init-matrix)
+                                (define result (broydens num-iter system guess init-matrix))
+                                (printf "result: ~a~n" result)
+                                (for ([x val])
+                                  (send (list-ref broydens-result-list x) set-value (bigfloat->string (cadr (list-ref result x))))
+                                  )
+                                void
+                                ))))
+(define broydens-right (new vertical-panel%
+                            [parent broydens-split]
+                            [style '(border)]
+                            [alignment '(center center)]))
+(define broydens-result-label (new message%
+                                   [parent broydens-right]
+                                   [label "results:"]))
+(define broydens-result (new vertical-panel%
+                             [parent broydens-right]
+                             ))
+(define broydens-result-list (for/list ([x 6])
+                               (new text-field%
+                                    [parent broydens-result]
+                                    [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
+                                    [style '(single deleted)]
+                                    )))
+
+(set-dimensions broydens-functions broydens-functions-list 1)
+(set-dimensions broydens-init-guess broydens-guess-list 1)
+(set-dimensions broydens-result broydens-result-list 1)
+(set-dimensions broydens-init-matrix broydens-matrix-vert 1)
+(for ([x (length broydens-matrix-hor)])
+  (set-dimensions (list-ref broydens-matrix-vert x) (list-ref broydens-matrix-hor x) 1))
 
 
 ; Show the frame by calling its show method
-;will show two frames/windows for each part
 (send frame show #t)
 (send single-sys-tab change-children (lambda (children)
                                        (list tab-panel)))
