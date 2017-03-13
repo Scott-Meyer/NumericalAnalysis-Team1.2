@@ -77,8 +77,8 @@
   (when (> (string-length word) 0)
     (loop)
     (when (equal? state 3)
-        (set! ret (append ret (list (bf exponent))))
-        )
+      (set! ret (append ret (list (bf exponent))))
+      )
     )
   ret
   )
@@ -155,20 +155,26 @@
 ; Make a frame by instantiating the frame% class
 ;this frame for part a-Single Var 
 (define frame (new frame%
-                   [label "Group 1.2 Numerical Analysis Project-Single Var"]
+                   [label "Group 1.2 Numerical Analysis Project"]
                    [width 1000]
                    [height 600]))
 
-;this for frame b-systems
-(define sys-frame (new frame%
-                       [label "Group 1.2 Numerical Analysis Project-Systems"]
-                       [width 1000]
-                       [height 600]))
+(define single-sys-tab (new tab-panel%
+                            [parent frame]
+                            [choices (list "Single Variable" "Systems")]
+                            (callback
+                             (lambda [tp e]
+                               (case [send tp get-selection]
+                                 ;separates the differnt tabs and calls _-panel to fill each tab with info
+                                 ((0) (send tp change-children (lambda (children)
+                                                                 (list tab-panel))))
+                                 ((1) (send tp change-children (lambda (children)
+                                                                 (list sys-tab-panel)))))))))
 
 
 ;interface for adding tabs to the frame of part a
 (define tab-panel (new tab-panel%
-                       [parent frame]
+                       [parent single-sys-tab]
                        [choices (list "bisection num-iterations" "fixed-point num-iterations" "newtons-method num-iterations")]
                        (callback
                         (lambda [tp e]
@@ -179,11 +185,11 @@
                             ((1) (send tp change-children (lambda (children)
                                                             (list b-panel))))
                             ((2) (send tp change-children (lambda (children)
-                                                            (list a-panel)))))))))
+                                                            (list c-panel)))))))))
 
 ;interface for adding tabs to the frame of part b
 (define sys-tab-panel (new tab-panel%
-                           [parent sys-frame]
+                           [parent single-sys-tab]
                            [choices (list "gaussian-elim" "lu-decomp" "jacobi" "sor" "multi-newtons" "broydens")]
                            (callback
                             (lambda [tp e]
@@ -209,7 +215,45 @@
                      [parent tab-panel]))
 (define a-text (new message%
                     [parent a-panel]
-                    [label "This is the first panel"]))
+                    [label ""]))
+
+(define bisection-split (new horizontal-panel%
+                             [parent a-panel]
+                             [alignment '(left center)]))
+(define bisection-main (new vertical-panel%
+                            [parent bisection-split]))
+(define bis-num-iter (new text-field%
+                          [label "Number of iterations:"]
+                          [parent bisection-main]
+                          ))
+(define bis-init-guess-left (new text-field%
+                          [label "Initial left bracket:"]
+                          [parent bisection-main]
+                          ))
+(define bis-init-guess-right (new text-field%
+                          [label "Initial right bracket:"]
+                          [parent bisection-main]
+                          ))
+(define bis-equation (new text-field%
+                          [label "f(x)="]
+                          [parent bisection-main]
+                          ))
+(define bis-submit (new button%
+                        [label "Submit"]
+                        [parent bisection-main]
+                        (callback
+                         (lambda (_ ...)
+                           (define num-iter (string->number (send (send bis-num-iter get-editor) get-text)))
+                           (define init-left (string->number (send (send bis-init-guess-left get-editor) get-text)))
+                           (define init-right (string->number (send (send bis-init-guess-right get-editor) get-text)))
+                           (define in-string (send (send bis-equation get-editor) get-text))
+                           (printf "(bisection ~a ~a ~a)~n" num-iter (list init-left init-right) (process-string in-string))
+                           (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
+                           (send bis-other set-value (bigfloat->string result))
+                             ))))
+(define bis-other (new text-field%
+                   [parent bisection-split]
+                   [label "results"]))
 
 ;fixed-point num-iterations tab
 (define b-panel (new panel%
@@ -273,8 +317,8 @@
 ; Show the frame by calling its show method
 ;will show two frames/windows for each part
 (send frame show #t)
-(send sys-frame show #t)
-
+(send single-sys-tab change-children (lambda (children)
+                                       (list tab-panel)))
 (send tab-panel change-children (lambda (children)
                                   (list a-panel)))
 (send sys-tab-panel change-children (lambda (children)
