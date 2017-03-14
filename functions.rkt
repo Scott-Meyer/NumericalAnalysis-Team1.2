@@ -27,14 +27,13 @@
             (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
             (apply bf/ lst)))
 (define expt (lambda lst
-            (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
-            (apply bfexpt lst)))
+               (for ([_ (in-range 1 (length lst))])(set! fp-op (add1 fp-op)))
+               (apply bfexpt lst)))
 
 (define (reset-fp-op)
   (set! fp-op 0)
   )
 
-;do the order of the variables matter?
 (define (get-vars matrix)
   (define ret (list))
   (for ([row matrix])
@@ -52,9 +51,9 @@
   )
 
 ;example vector of functions:
-(define V (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
-                (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
-                ))
+;(define V (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
+;                (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
+;                ))
 ;(jacobian V)
 (define (jacobian matrix) ;returns the jacobian matrix of 'matrix'
   (define ret (list))

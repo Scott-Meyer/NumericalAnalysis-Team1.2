@@ -1,5 +1,6 @@
 #lang racket/gui
-(require math/bigfloat)
+(require math/bigfloat
+         plot)
 
 (bf-precision 128);sets the precision we want to use
 
@@ -9,6 +10,61 @@
          (only-in "functions.rkt"
                   fp-op
                   reset-fp-op))
+
+(define (parse-value val var-val respect-to) ;returns the value of 'val' with 'respect-to' replaced by 'var-val'
+  ;(printf "parse ~a with var ~a = ~a~n" val respect-to var-val)
+  (define ret (list (car val)))
+  (for ([x (in-range 1 (sub1 (length val)) 2)])
+    (if (equal? respect-to (list-ref val x))
+        (begin
+          (set! x (add1 x))
+          (set! ret (list-set ret 0 (* (list-ref ret 0) (expt var-val (list-ref val x)))))
+          )
+        (begin
+          (set! ret (append ret (list (list-ref val x) (list-ref val (add1 x)))))
+          )
+        )
+    )
+  ret
+  )
+
+(define (strip-bf lst)
+  (define ret (list))
+  (for ([x lst])
+    (if (list? x)
+        (set! ret (append ret (list (strip-bf x))))
+        (if (bigfloat? x)
+            (set! ret (append ret (list (bigfloat->real x))))
+            (set! ret (append ret (list x)))
+            )
+        )
+    )
+  ret
+  )
+
+(define (list->function lst)
+  (lambda (x)
+    (define ret 0)
+    (define op '+)
+    (define current-val 0)
+    (for ([val lst])
+      (set! val val)
+      (if (list? val)
+          (begin
+            (set! current-val val)
+            (set! current-val (parse-value current-val x 'x))
+            (case op
+              [(+) (set! ret (+ ret (car current-val)))]
+              [(-) (set! ret (- ret (car current-val)))]
+              )
+            )
+          (begin
+            (set! op val)
+            )
+          )
+      )
+    ret)
+  )
 
 ;ex. (parse-coefficient "9x^2y^3") --> (list (bf 9) "x^2y^3")
 (define (parse-coefficient word)
@@ -126,35 +182,7 @@
   output-list
   )
 
-;~~~~~~~~~~~~FUNCTIONS~~~~~~~~~~~~~~~~~~~
-;Function Arguments (argument name --> example):
-;   num-iterations --> 5
-;   initial-guess --> 0.5
-;   input-string --> (process-string "3x^2 + 2x - 7")
-;   system --> (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
-;                     (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
-;                     ))
-;   guesses --> (list (list 'x (bf 1)) (list 'y (bf 2)))
-;   init-matrix --> (identity (length (get-vars sys)))
-;
-;Single var:
-;   ~~~~~Scott's~~~~~~~~~~
-;    (bisection num-iterations initial-guess (process-string input-string))
-;    (fixed-point num-iterations initial-guess (process-string input-string))
-;   ~~~~~Brad's~~~~~~~~~~
-;    (newtons-method num-iterations initial-guess input-string)
-;
-;Systems:
-;   ~~~~~Scott's~~~~~~~~~~
-;    (gaussian-elim (process-string input-string))
-;    (lu-decomp (process-string input-string))
-;    (jacobi (process-string input-string))
-;    (sor (process-string input-string))
-;   ~~~~~Brad's~~~~~~~~~~
-;    (multi-newtons num-iterations system guesses)
-;    (broydens num-iterations system guesses init-matrix)
-
-;~~~~~~~~~~~~Jonathans GUI~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~GUI~~~~~~~~~~~~~~~
 
 ; Make a frame by instantiating the frame% class
 ;this frame for part a-Single Var 
@@ -179,7 +207,7 @@
 ;interface for adding tabs to the frame of part a
 (define tab-panel (new tab-panel%
                        [parent single-sys-tab]
-                       [choices (list "bisection num-iterations" "fixed-point num-iterations" "newtons-method num-iterations")]
+                       [choices (list "bisection" "fixed-point" "newtons-method")]
                        (callback
                         (lambda [tp e]
                           (case [send tp get-selection]
@@ -256,6 +284,14 @@
                            (define in-string (send (send bis-equation get-editor) get-text))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
                            (send bis-result set-value (bigfloat->string result))
+                           (define bis-func (list->function (strip-bf (process-string in-string))))
+                           (plot/dc (list
+                                     (function bis-func (- init-left 0.5) (+ init-right 0.5))
+                                     (points (list (list init-left (bis-func init-left))) #:color 'black #:fill-color 'black #:sym 'fulltriangleright #:size 12)
+                                     (points (list (list init-right (bis-func init-right))) #:color 'black #:fill-color 'black #:sym 'fulltriangleleft #:size 12)
+                                     (points (list (list (bigfloat->real result) (bis-func (bigfloat->real result)))) #:color 'darkgreen #:fill-color 'green #:sym 'fullcircle #:size 12)
+                                     )
+                                    (send bis-graph get-dc) 0 0 (send bis-graph get-width) (send bis-graph get-height))     
                            ))))
 (define bis-right (new vertical-panel%
                        [parent bisection-split]
@@ -264,6 +300,8 @@
 (define bis-result (new text-field%
                         [parent bis-right]
                         [label "results"]))
+(define bis-graph (new canvas%
+                       [parent bis-right]))
 
 ;fixed-point num-iterations tab
 (define b-panel (new panel%
@@ -301,6 +339,13 @@
                            (define in-string (send (send fix-equation get-editor) get-text))
                            (define result (fixed-point num-iter init-guess (process-string in-string)))
                            (send fix-result set-value (bigfloat->string result))
+                           (define fix-func (list->function (strip-bf (process-string in-string))))
+                           (plot/dc (list
+                                     (function fix-func (- init-guess 10) (+ init-guess 10))
+                                     (points (list (list init-guess (fix-func init-guess))) #:color 'black #:fill-color 'black #:sym 'fulltriangle #:size 12)
+                                     (points (list (list (bigfloat->real result) (fix-func (bigfloat->real result)))) #:color 'darkgreen #:fill-color 'green #:sym 'fullcircle #:size 12)
+                                     )
+                                    (send fix-graph get-dc) 0 0 (send fix-graph get-width) (send fix-graph get-height))
                            ))))
 (define fix-right (new vertical-panel%
                        [parent fix-split]
@@ -309,6 +354,8 @@
 (define fix-result (new text-field%
                         [parent fix-right]
                         [label "results"]))
+(define fix-graph (new canvas%
+                       [parent fix-right]))
 
 ;newtons-method num-iterations tab
 (define c-panel (new panel%
@@ -346,6 +393,13 @@
                             (define in-string (send (send newt-equation get-editor) get-text))
                             (define result (newtons-method num-iter init-guess (process-string in-string)))
                             (send newt-result set-value (bigfloat->string result))
+                            (define newt-func (list->function (strip-bf (process-string in-string))))
+                            (plot/dc (list
+                                      (function newt-func (- init-guess 10) (+ init-guess 10))
+                                      (points (list (list init-guess (newt-func init-guess))) #:color 'black #:fill-color 'black #:sym 'fulltriangle #:size 12)
+                                      (points (list (list (bigfloat->real result) (newt-func (bigfloat->real result)))) #:color 'darkgreen #:fill-color 'green #:sym 'fullcircle #:size 12)
+                                      )
+                                     (send newt-graph get-dc) 0 0 (send newt-graph get-width) (send newt-graph get-height))
                             ))))
 (define newt-right (new vertical-panel%
                         [parent newt-split]
@@ -354,6 +408,8 @@
 (define newt-result (new text-field%
                          [parent newt-right]
                          [label "results"]))
+(define newt-graph (new canvas%
+                        [parent newt-right]))
 
 ;part b
 
@@ -386,78 +442,78 @@
                         [alignment '(left top)]
                         [style '(border)]))
 (define gauss-slider (new slider%
-                             [label "Number of unknowns:"]
-                             [min-value 1]
-                             [max-value 6]
-                             [parent gauss-main]
-                             (callback
-                              (lambda (_ ...)
-                                (define val (send gauss-slider get-value))
-                                (set-dimensions gauss-result gauss-result-list val)
-                                (set-dimensions gauss-init-matrix gauss-matrix-vert val)
-                                (for ([x (length gauss-matrix-hor)])
-                                  (set-dimensions (list-ref gauss-matrix-vert x) (list-ref gauss-matrix-hor x) (+ val 1)))
-                                )
-                              )))
+                          [label "Number of unknowns:"]
+                          [min-value 1]
+                          [max-value 6]
+                          [parent gauss-main]
+                          (callback
+                           (lambda (_ ...)
+                             (define val (send gauss-slider get-value))
+                             (set-dimensions gauss-result gauss-result-list val)
+                             (set-dimensions gauss-init-matrix gauss-matrix-vert val)
+                             (for ([x (length gauss-matrix-hor)])
+                               (set-dimensions (list-ref gauss-matrix-vert x) (list-ref gauss-matrix-hor x) (+ val 1)))
+                             )
+                           )))
 (define gauss-matrix-lable (new message% [parent gauss-main] [label "Matrix:"]))
 (define gauss-init-matrix (new vertical-panel%
-                                  [parent gauss-main]
-                                  ))
-(define gauss-matrix-vert (for/list ([_ 6])
-                               (new horizontal-panel%
-                                    [parent gauss-init-matrix])
+                               [parent gauss-main]
                                ))
+(define gauss-matrix-vert (for/list ([_ 6])
+                            (new horizontal-panel%
+                                 [parent gauss-init-matrix])
+                            ))
 (define gauss-matrix-hor (for/list ([x gauss-matrix-vert])
-                              (for/list([y 7])
-                                (new text-field%
-                                     [parent x]
-                                     [label #f]
-                                     [style '(single deleted)]
-                                     [min-width 2]
-                                     )
-                                )))
+                           (for/list([y 7])
+                             (new text-field%
+                                  [parent x]
+                                  [label #f]
+                                  [style '(single deleted)]
+                                  [min-width 2]
+                                  )
+                             )))
 
                               
 (define gauss-submit (new button%
-                             [label "Submit"]
-                             [parent gauss-main]
-                             (callback
-                              (lambda (_ ...)
-                                (define val (send gauss-slider get-value))
-                                (define init-matrix (for/list ([x val])
-                                                            (for/list ([y val])
-                                                              (bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) y) get-editor) get-text)))
-                                                              ))
-                                  )
-                                (define b (for/list ([x val])
-                                                 (list(bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) val) get-editor) get-text)))))
-                                  )
+                          [label "Submit"]
+                          [parent gauss-main]
+                          (callback
+                           (lambda (_ ...)
+                             (define val (send gauss-slider get-value))
+                             (define init-matrix (for/list ([x val])
+                                                   (for/list ([y val])
+                                                     (bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) y) get-editor) get-text)))
+                                                     ))
+                               )
+                             (define b (for/list ([x val])
+                                         (list(bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) val) get-editor) get-text)))))
+                               )
                                                       
                               
-                                (printf "(gaussian-elim ~a ~a)~n" init-matrix b)
-                                (define result (gaussian-elim init-matrix b))
-                                (printf "result: ~a~n" result)
-                                (for ([x val])
-                                  (send (list-ref gauss-result-list x) set-value (bigfloat->string  (list-ref result x)))
-                                  )
-                                void
-                                ))))
+                             (printf "(gaussian-elim ~a ~a)~n" init-matrix b)
+                             (define result (gaussian-elim init-matrix b))
+                             (printf "result: ~a~n" result)
+                             (for ([x val])
+                               (send (list-ref gauss-result-list x) set-value (bigfloat->string  (list-ref result x)))
+                               )
+                             void
+                             ))))
 (define gauss-right (new vertical-panel%
-                            [parent gauss-split]
-                            [style '(border)]
-                            [alignment '(center center)]))
+                         [parent gauss-split]
+                         [style '(border)]
+                         [alignment '(center center)]))
 (define gauss-result-label (new message%
-                                   [parent gauss-right]
-                                   [label "results:"]))
+                                [parent gauss-right]
+                                [label "results:"]))
 (define gauss-result (new vertical-panel%
-                             [parent gauss-right]
-                             ))
+                          [parent gauss-right]
+                          ))
 (define gauss-result-list (for/list ([x 6])
-                               (new text-field%
-                                    [parent gauss-result]
-                                    [label (format "x~a=" (add1 x))]
-                                    [style '(single deleted)]
-                                    )))
+                            (new text-field%
+                                 [parent gauss-result]
+                                 [label (format "x~a=" (add1 x))]
+                                 [style '(single deleted)]
+                                 )))
 (set-dimensions gauss-init-matrix gauss-matrix-vert 1)
 (set-dimensions gauss-result gauss-result-list 1)
 (for ([x (length gauss-matrix-hor)])
@@ -667,9 +723,9 @@
                                                 )
                                   )
                                 (define init-matrix (for/list ([x val])
-                                                            (for/list ([y val])
-                                                              (car(process-string (send (send (list-ref (list-ref broydens-matrix-hor x) y) get-editor) get-text)))
-                                                              ))
+                                                      (for/list ([y val])
+                                                        (car(process-string (send (send (list-ref (list-ref broydens-matrix-hor x) y) get-editor) get-text)))
+                                                        ))
                                   )
                                                       
                               
