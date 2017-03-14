@@ -612,7 +612,7 @@
                                   )
                                 (printf "(lu-decomp ~a)~n" init-matrix)
                                 (define result (lu-decomp init-matrix))
-                                (printf "result: L:~a U:~a A:~a ~n" (list-ref result 0) (list-ref result 1) (list-ref result 2))
+                                (printf "result: L:~a U:~a P:~a ~n" (list-ref result 0) (list-ref result 1) (list-ref result 2))
                                 (for ([x val])
                                     (for ([y val])
                                       (let ([Lc (list-ref (list-ref (list-ref result 0) x) y)]
@@ -671,7 +671,7 @@
                                 )))
 (define lu-a-label (new message%
                                    [parent lu-right]
-                                   [label "A:"]))
+                                   [label "P:"]))
 (define lu-a-matrix (new vertical-panel%
                                   [parent lu-right]
                                   ))
