@@ -283,13 +283,17 @@
                            (define init-right (string->number (send (send bis-init-guess-right get-editor) get-text)))
                            (define in-string (send (send bis-equation get-editor) get-text))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
-                           (send bis-result set-value (bigfloat->string result))
+                           (define split-time (regexp-split #rx"\\." (bigfloat->string (list-ref result 3))))
+                           (send bis-iter set-value (bigfloat->string (list-ref result 1)))
+                           (send bis-fpops set-value (bigfloat->string (list-ref result 2)))
+                           (send bis-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
+                           (send bis-result set-value (bigfloat->string (first result)))
                            (define bis-func (list->function (strip-bf (process-string in-string))))
                            (plot/dc (list
                                      (function bis-func (- init-left 0.5) (+ init-right 0.5))
                                      (points (list (list init-left (bis-func init-left))) #:color 'black #:fill-color 'black #:sym 'fulltriangleright #:size 12)
                                      (points (list (list init-right (bis-func init-right))) #:color 'black #:fill-color 'black #:sym 'fulltriangleleft #:size 12)
-                                     (points (list (list (bigfloat->real result) (bis-func (bigfloat->real result)))) #:color 'darkgreen #:fill-color 'green #:sym 'fullcircle #:size 12)
+                                     (points (list (list (bigfloat->real (first result)) (bis-func (bigfloat->real (first result))))) #:color 'darkgreen #:fill-color 'green #:sym 'fullcircle #:size 12)
                                      )
                                     (send bis-graph get-dc) 0 0 (send bis-graph get-width) (send bis-graph get-height))     
                            ))))
@@ -300,6 +304,15 @@
 (define bis-result (new text-field%
                         [parent bis-right]
                         [label "results"]))
+(define bis-iter (new text-field%
+                      [parent bis-right]
+                      [label "Number of iterations"]))
+(define bis-fpops (new text-field%
+                       [parent bis-right]
+                       [label "Floating Point Operations"]))
+(define bis-time (new text-field%
+                      [parent bis-right]
+                      [label "Execution Time"]))
 (define bis-graph (new canvas%
                        [parent bis-right]))
 
