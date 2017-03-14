@@ -46,7 +46,7 @@
       [(mzero? (f x1)) (list x1 iter)]
       [(mzero? (f x2)) (list x2 iter)]
       [else
-       (define c (mabs (m/(m+ x1 x2) (bf 2))))
+       (define c (m/(m+ x1 x2) (bf 2)))
        (if (or (mzero? (f c)) (mzero? (m- iter (bf 1)))) (list c (bf- iter (bf 1)))
            (if (m> (f c) (bf 0)) (bisection1 (m- iter (bf 1)) f x1 c)
                            (bisection1 (m- iter (bf 1)) f c x2)))]))
