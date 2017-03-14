@@ -481,22 +481,387 @@
 (define e-panel (new panel%
                      [parent sys-tab-panel]))
 (define e-text (new message%
-                    [parent e-panel]
-                    [label "This is the second panel"]))
+                     [parent e-panel]
+                     [label ""]))
+(define lu-split (new horizontal-panel%
+                         [parent e-panel]
+                         [alignment '(left center)]
+                         [style '(border)]))
+(define lu-main (new vertical-panel%
+                        [parent lu-split]
+                        [alignment '(left top)]
+                        [style '(border)]))
+(define lu-slider (new slider%
+                             [label "Size of nXn matrix:"]
+                             [min-value 2]
+                             [max-value 6]
+                             [parent lu-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send lu-slider get-value))
+                                ;(set-dimensions lu-result lu-result-list val)
+                                (set-dimensions lu-init-matrix lu-matrix-vert val)
+                                (for ([x (length lu-matrix-hor)])
+                                  (set-dimensions (list-ref lu-matrix-vert x) (list-ref lu-matrix-hor x) val))
+                                (set-dimensions lu-l-matrix lu-l-vert val)
+                                (for ([x (length lu-l-hor)])
+                                  (set-dimensions (list-ref lu-l-vert x) (list-ref lu-l-hor x) val))
+                                (set-dimensions lu-u-matrix lu-u-vert val)
+                                (for ([x (length lu-u-hor)])
+                                  (set-dimensions (list-ref lu-u-vert x) (list-ref lu-u-hor x) val))
+                                (set-dimensions lu-a-matrix lu-a-vert val)
+                                (for ([x (length lu-a-hor)])
+                                  (set-dimensions (list-ref lu-a-vert x) (list-ref lu-a-hor x) val))
+                              ))))
+(define lu-matrix-lable (new message% [parent lu-main] [label "Matrix:"]))
+(define lu-init-matrix (new vertical-panel%
+                                  [parent lu-main]
+                                  ))
+(define lu-matrix-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent lu-init-matrix])
+                               ))
+(define lu-matrix-hor (for/list ([x lu-matrix-vert])
+                              (for/list([y 6])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+
+                              
+(define lu-submit (new button%
+                             [label "Submit"]
+                             [parent lu-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send lu-slider get-value))
+                                (define init-matrix (for/list ([x val])
+                                                            (for/list ([y val])
+                                                              (bf (string->number (send (send (list-ref (list-ref lu-matrix-hor x) y) get-editor) get-text)))
+                                                              ))
+                                  )
+                                (printf "(lu-decomp ~a)~n" init-matrix)
+                                (define result (lu-decomp init-matrix))
+                                (printf "result: L:~a U:~a A:~a ~n" (list-ref result 0) (list-ref result 1) (list-ref result 2))
+                                (for ([x val])
+                                    (for ([y val])
+                                      (let ([Lc (list-ref (list-ref (list-ref result 0) x) y)]
+                                            [Uc (list-ref (list-ref (list-ref result 1) x) y)]
+                                            [Ac (list-ref (list-ref (list-ref result 2) x) y)])
+                                        (send (list-ref (list-ref lu-l-hor x) y) set-value (if (bigfloat? Lc) (bigfloat->string Lc) (number->string Lc)))
+                                        (send (list-ref (list-ref lu-u-hor x) y) set-value (if (bigfloat? Uc) (bigfloat->string Uc) (number->string Uc)))
+                                        (send (list-ref (list-ref lu-a-hor x) y) set-value (if (bigfloat? Ac) (bigfloat->string Ac) (number->string Ac))))))
+                                #|(for ([x val])
+                                  (send (list-ref lu-result-list x) set-value (bigfloat->string  (list-ref result x)))
+                                  )|#
+                                void
+                                ))))
+(define lu-right (new vertical-panel%
+                            [parent lu-split]
+                            [style '(border)]
+                            [alignment '(left center)]))
+(define lu-l-label (new message%
+                                   [parent lu-right]
+                                   [label "L:"]))
+
+(define lu-l-matrix (new vertical-panel%
+                                  [parent lu-right]
+                                  ))
+(define lu-l-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent lu-l-matrix])
+                               ))
+(define lu-l-hor (for/list ([x lu-l-vert])
+                              (for/list([y 6])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+(define lu-u-label (new message%
+                                   [parent lu-right]
+                                   [label "U:"]))
+(define lu-u-matrix (new vertical-panel%
+                                  [parent lu-right]
+                                  ))
+(define lu-u-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent lu-u-matrix])
+                               ))
+(define lu-u-hor (for/list ([x lu-u-vert])
+                              (for/list([y 6])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+(define lu-a-label (new message%
+                                   [parent lu-right]
+                                   [label "A:"]))
+(define lu-a-matrix (new vertical-panel%
+                                  [parent lu-right]
+                                  ))
+(define lu-a-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent lu-a-matrix])
+                               ))
+(define lu-a-hor (for/list ([x lu-a-vert])
+                              (for/list([y 6])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+
+(set-dimensions lu-init-matrix lu-matrix-vert 2)
+(set-dimensions lu-l-matrix lu-l-vert 2)
+(set-dimensions lu-u-matrix lu-u-vert 2)
+(set-dimensions lu-a-matrix lu-a-vert 2)
+(for ([x (length lu-matrix-hor)])
+  (set-dimensions (list-ref lu-matrix-vert x) (list-ref lu-matrix-hor x) 2))
+(for ([x (length lu-l-hor)])
+  (set-dimensions (list-ref lu-l-vert x) (list-ref lu-l-hor x) 2))
+(for ([x (length lu-u-hor)])
+  (set-dimensions (list-ref lu-u-vert x) (list-ref lu-u-hor x) 2))
+(for ([x (length lu-a-hor)])
+  (set-dimensions (list-ref lu-a-vert x) (list-ref lu-a-hor x) 2))
+
+
 
 ;jacobi
 (define f-panel (new panel%
                      [parent sys-tab-panel]))
 (define f-text (new message%
                     [parent f-panel]
-                    [label "This is the third panel"]))
+                    [label ""]))
+(define jacobi-split (new horizontal-panel%
+                            [parent f-panel]
+                            [alignment '(left center)]
+                            [style '(border)]))
+(define jacobi-main (new vertical-panel%
+                           [parent jacobi-split]
+                           [alignment '(center center)]
+                           [style '(border)]))
+(define jacobi-num-iter (new text-field%
+                               [label "Number of iterations:"]
+                               [parent jacobi-main]
+                               ))
+(define jacobi-slider (new slider%
+                             [label "Number of unknowns:"]
+                             [min-value 2]
+                             [max-value 6]
+                             [parent jacobi-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send jacobi-slider get-value))
+                                (set-dimensions jacobi-init-guess jacobi-guess-list val)
+                                (set-dimensions jacobi-result jacobi-result-list val)
+                                (set-dimensions jacobi-init-matrix jacobi-matrix-vert val)
+                                (for ([x (length jacobi-matrix-hor)])
+                                  (set-dimensions (list-ref jacobi-matrix-vert x) (list-ref jacobi-matrix-hor x) (add1 val)))
+                                )
+                              )))
+(define jacobi-init-guess (new vertical-panel%
+                                 [parent jacobi-main]
+                                 ))
+(define jacobi-guess-list (for/list ([x 6])
+                              (new text-field%
+                                   [parent jacobi-init-guess]
+                                   [label (format "x~a=" x)]
+                                   [style '(single deleted)]
+                                   )))
+(define jacobi-matrix-lable (new message% [parent jacobi-main] [label "Matrix:"]))
+(define jacobi-init-matrix (new vertical-panel%
+                                  [parent jacobi-main]
+                                  ))
+(define jacobi-matrix-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent jacobi-init-matrix])
+                               ))
+(define jacobi-matrix-hor (for/list ([x jacobi-matrix-vert])
+                              (for/list([y 7])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+                              
+
+(define jacobi-submit (new button%
+                             [label "Submit"]
+                             [parent jacobi-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define num-iter (string->number (send (send jacobi-num-iter get-editor) get-text)))
+                                (define val (send jacobi-slider get-value))
+                                (define guess (for/list ([x val])
+                                                (bf (string->number (send (send (list-ref jacobi-guess-list x) get-editor) get-text)))
+                                                      ))
+                                (define init-matrix (map flatten (for/list ([x val])
+                                                                   (for/list ([y val])
+                                                                     (process-string (send (send (list-ref (list-ref jacobi-matrix-hor x) y) get-editor) get-text))
+                                                                     )))
+                                  )
+                                (define b-vector (for/list ([x val])
+                                                    (bf (string->number (send (send (list-ref (list-ref jacobi-matrix-hor x) val) get-editor) get-text)))
+                                                     ))
+                                                      
+                              
+                                (printf "(jacobi ~a ~a ~a ~a)~n" num-iter init-matrix guess b-vector)
+                                (define result (jacobi num-iter init-matrix guess b-vector))
+                                (printf "result: ~a~n" result)
+                                (for ([x val])
+                                  (send (list-ref jacobi-result-list x) set-value (bigfloat->string (list-ref result x)))
+                                  )
+                                void
+                                ))))
+(define jacobi-right (new vertical-panel%
+                            [parent jacobi-split]
+                            [style '(border)]
+                            [alignment '(center center)]))
+(define jacobi-result-label (new message%
+                                   [parent jacobi-right]
+                                   [label "results:"]))
+(define jacobi-result (new vertical-panel%
+                             [parent jacobi-right]
+                             ))
+(define jacobi-result-list (for/list ([x 6])
+                               (new text-field%
+                                    [parent jacobi-result]
+                                    [label (format "x~a=" x)]
+                                    [style '(single deleted)]
+                                    )))
+
+(set-dimensions jacobi-init-guess jacobi-guess-list 2)
+(set-dimensions jacobi-result jacobi-result-list 2)
+(set-dimensions jacobi-init-matrix jacobi-matrix-vert 2)
+(for ([x (length jacobi-matrix-hor)])
+  (set-dimensions (list-ref jacobi-matrix-vert x) (list-ref jacobi-matrix-hor x) 3))
+
+
 
 ;sor
 (define g-panel (new panel%
                      [parent sys-tab-panel]))
 (define g-text (new message%
                     [parent g-panel]
-                    [label "This is the fourth panel"]))
+                    [label ""]))
+(define sor-split (new horizontal-panel%
+                            [parent g-panel]
+                            [alignment '(left center)]
+                            [style '(border)]))
+(define sor-main (new vertical-panel%
+                           [parent sor-split]
+                           [alignment '(center center)]
+                           [style '(border)]))
+(define sor-num-iter (new text-field%
+                               [label "Number of iterations:"]
+                               [parent sor-main]
+                               ))
+(define sor-slider (new slider%
+                             [label "Number of unknowns:"]
+                             [min-value 2]
+                             [max-value 6]
+                             [parent sor-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define val (send sor-slider get-value))
+                                (set-dimensions sor-init-guess sor-guess-list val)
+                                (set-dimensions sor-result sor-result-list val)
+                                (set-dimensions sor-init-matrix sor-matrix-vert val)
+                                (for ([x (length sor-matrix-hor)])
+                                  (set-dimensions (list-ref sor-matrix-vert x) (list-ref sor-matrix-hor x) (add1 val)))
+                                )
+                              )))
+(define sor-init-guess (new vertical-panel%
+                                 [parent sor-main]
+                                 ))
+(define sor-guess-list (for/list ([x 6])
+                              (new text-field%
+                                   [parent sor-init-guess]
+                                   [label (format "x~a=" x)]
+                                   [style '(single deleted)]
+                                   )))
+(define sor-matrix-lable (new message% [parent sor-main] [label "Matrix:"]))
+(define sor-init-matrix (new vertical-panel%
+                                  [parent sor-main]
+                                  ))
+(define sor-matrix-vert (for/list ([_ 6])
+                               (new horizontal-panel%
+                                    [parent sor-init-matrix])
+                               ))
+(define sor-matrix-hor (for/list ([x sor-matrix-vert])
+                              (for/list([y 7])
+                                (new text-field%
+                                     [parent x]
+                                     [label #f]
+                                     [style '(single deleted)]
+                                     [min-width 2]
+                                     )
+                                )))
+                              
+
+(define sor-submit (new button%
+                             [label "Submit"]
+                             [parent sor-main]
+                             (callback
+                              (lambda (_ ...)
+                                (define num-iter (string->number (send (send sor-num-iter get-editor) get-text)))
+                                (define val (send sor-slider get-value))
+                                (define guess (for/list ([x val])
+                                                (bf (string->number (send (send (list-ref sor-guess-list x) get-editor) get-text)))
+                                                      ))
+                                (define init-matrix (map flatten (for/list ([x val])
+                                                                   (for/list ([y val])
+                                                                     (process-string (send (send (list-ref (list-ref sor-matrix-hor x) y) get-editor) get-text))
+                                                                     )))
+                                  )
+                                (define b-vector (for/list ([x val])
+                                                    (bf (string->number (send (send (list-ref (list-ref sor-matrix-hor x) val) get-editor) get-text)))
+                                                     ))
+                                                      
+                              
+                                (printf "(sor ~a ~a ~a ~a)~n" num-iter init-matrix guess b-vector)
+                                (define result (sor num-iter init-matrix guess b-vector))
+                                (printf "result: ~a~n" result)
+                                (for ([x val])
+                                  (send (list-ref sor-result-list x) set-value (bigfloat->string (list-ref result x)))
+                                  )
+                                void
+                                ))))
+(define sor-right (new vertical-panel%
+                            [parent sor-split]
+                            [style '(border)]
+                            [alignment '(center center)]))
+(define sor-result-label (new message%
+                                   [parent sor-right]
+                                   [label "results:"]))
+(define sor-result (new vertical-panel%
+                             [parent sor-right]
+                             ))
+(define sor-result-list (for/list ([x 6])
+                               (new text-field%
+                                    [parent sor-result]
+                                    [label (format "x~a=" x)]
+                                    [style '(single deleted)]
+                                    )))
+
+(set-dimensions sor-init-guess sor-guess-list 2)
+(set-dimensions sor-result sor-result-list 2)
+(set-dimensions sor-init-matrix sor-matrix-vert 2)
+(for ([x (length sor-matrix-hor)])
+  (set-dimensions (list-ref sor-matrix-vert x) (list-ref sor-matrix-hor x) 3))
 
 ;multi-newtons
 (define h-panel (new panel%
