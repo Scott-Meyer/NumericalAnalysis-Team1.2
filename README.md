@@ -11,7 +11,7 @@ To write a program, that takes math problems of specific types and solves them.
 *   Clear display of the solution (tables and graphs)
 *   Errors
 *   Iteration count
-*   flops (?)
+*   flops
 *   accuracy
 *   time/effieciency measures
 
@@ -36,6 +36,3 @@ Oral presentation with handouts, Use of program documentation, Tech support
     *   Jonathan Trejo
 *   Handouts
     *   Kendra
-
-#Discord Server
-https://discord.gg/tTaUcJP
