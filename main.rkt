@@ -288,8 +288,9 @@
                            (send bis-fpops set-value (bigfloat->string (list-ref result 2)))
                            (send bis-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                            (send bis-result set-value (bigfloat->string (first result)))
+                           (send bis-fpd set-value (bigfloat->string (bf (/ (bigfloat->real (list-ref result 2)) (max 4 (- (string-length (bigfloat->string (first result))) 4))))))
                            (define bis-func (list->function (strip-bf (process-string in-string))))
-                           (send bis-error set-value (number->string (abs (bis-func (bigfloat->real (first result))))))
+                           (send bis-error set-value (bigfloat->string (bf (abs (bis-func (bigfloat->real (first result)))))))
                            (plot/dc (list
                                      (function bis-func (- init-left 0.5) (+ init-right 0.5))
                                      (points (list (list init-left (bis-func init-left))) #:color 'black #:fill-color 'black #:sym 'fulltriangleright #:size 12)
@@ -317,6 +318,9 @@
 (define bis-error (new text-field%
                        [parent bis-right]
                        [label "Backward Error"]))
+(define bis-fpd (new text-field%
+                     [parent bis-right]
+                     [label "Flops per digit of accuracy"]))
 (define bis-graph (new canvas%
                        [parent bis-right]))
 
@@ -363,8 +367,9 @@
                            (send fix-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                            (send fix-result set-value (bigfloat->string result))
                            (send fix-fpops set-value (number->string fp-op))
+                           (send fix-fpd set-value (bigfloat->string (bf (/ fp-op (max 4 (- (string-length (bigfloat->string result)) 4))))))
                            (define fix-func (list->function (strip-bf (process-string in-string))))
-                           (send fix-error set-value (number->string (abs (fix-func (bigfloat->real result)))))
+                           (send fix-error set-value (bigfloat->string (bf (abs (fix-func (bigfloat->real result))))))
                            (plot/dc (list
                                      (function fix-func (- init-guess 10) (+ init-guess 10))
                                      (points (list (list init-guess (fix-func init-guess))) #:color 'black #:fill-color 'black #:sym 'fulltriangle #:size 12)
@@ -388,6 +393,9 @@
 (define fix-error (new text-field%
                        [parent fix-right]
                        [label "Backward Error"]))
+(define fix-fpd (new text-field%
+                     [parent fix-right]
+                     [label "Flops per digit of accuracy"]))
 (define fix-graph (new canvas%
                        [parent fix-right]))
 
@@ -434,8 +442,9 @@
                             (send newt-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                             (send newt-result set-value (bigfloat->string result))
                             (send newt-fpops set-value (number->string fp-op))
+                            (send newt-fpd set-value (bigfloat->string (bf (/ fp-op (max 4 (- (string-length (bigfloat->string result)) 4))))))
                             (define newt-func (list->function (strip-bf (process-string in-string))))
-                            (send newt-error set-value (number->string (abs (newt-func (bigfloat->real result)))))
+                            (send newt-error set-value (bigfloat->string (bf (abs (newt-func (bigfloat->real result))))))
                             (plot/dc (list
                                       (function newt-func (- init-guess 10) (+ init-guess 10))
                                       (points (list (list init-guess (newt-func init-guess))) #:color 'black #:fill-color 'black #:sym 'fulltriangle #:size 12)
@@ -459,6 +468,9 @@
 (define newt-error (new text-field%
                         [parent newt-right]
                         [label "Backward Error"]))
+(define newt-fpd (new text-field%
+                     [parent newt-right]
+                     [label "Flops per digit of accuracy"]))
 (define newt-graph (new canvas%
                         [parent newt-right]))
 
@@ -547,6 +559,7 @@
                              (define split-time (regexp-split #rx"\\." (number->string elapsed)))
                              (send gauss-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                              (send gauss-fpops set-value (number->string fp-op))
+                             (send gauss-fpd set-value (bigfloat->string (bf (/ fp-op (max 4 (- (string-length (bigfloat->string (first result))) 4))))))
                              (for ([x val])
                                (send (list-ref gauss-result-list x) set-value (bigfloat->string  (list-ref result x)))
                                )
@@ -571,6 +584,9 @@
 (define gauss-fpops (new text-field%
                          [parent gauss-right]
                          [label "Floating Point Operations"]))
+(define gauss-fpd (new text-field%
+                     [parent gauss-right]
+                     [label "Flops per digit of accuracy"]))
 (define gauss-time (new text-field%
                         [parent gauss-right]
                         [label "Execution Time"]))
@@ -1056,6 +1072,7 @@
                              (define split-time (regexp-split #rx"\\." (number->string elapsed)))
                              (send mnewt-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                              (send mnewt-fpops set-value (number->string fp-op))
+                             (send mnewt-fpd set-value (bigfloat->string (bf (/ fp-op (max 4 (- (string-length (bigfloat->string (second (first result)))) 4))))))
                              (for ([x val])
                                (send (list-ref mnewt-result-list x) set-value (bigfloat->string (cadr (list-ref result x))))
                                )
@@ -1080,6 +1097,9 @@
 (define mnewt-fpops (new text-field%
                          [parent mnewt-right]
                          [label "Floating Point Operations"]))
+(define mnewt-fpd (new text-field%
+                     [parent mnewt-right]
+                     [label "Flops per digit of accuracy"]))
 (define mnewt-time (new text-field%
                         [parent mnewt-right]
                         [label "Execution Time"]))
@@ -1187,6 +1207,7 @@
                                 (define split-time (regexp-split #rx"\\." (number->string elapsed)))
                                 (send broydens-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                                 (send broydens-fpops set-value (number->string fp-op))
+                                (send broydens-fpd set-value (bigfloat->string (bf (/ fp-op (max 4 (- (string-length (bigfloat->string (second (first result)))) 4))))))
                                 (for ([x val])
                                   (send (list-ref broydens-result-list x) set-value (bigfloat->string (cadr (list-ref result x))))
                                   )
@@ -1211,6 +1232,9 @@
 (define broydens-fpops (new text-field%
                             [parent broydens-right]
                             [label "Floating Point Operations"]))
+(define broydens-fpd (new text-field%
+                     [parent broydens-right]
+                     [label "Flops per digit of accuracy"]))
 (define broydens-time (new text-field%
                         [parent broydens-right]
                         [label "Execution Time"]))
