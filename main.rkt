@@ -255,10 +255,11 @@
                            (define init-right (string->number (send (send bis-init-guess-right get-editor) get-text)))
                            (define in-string (send (send bis-equation get-editor) get-text))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
+                           (define split-time (regexp-split #rx"\\." (bigfloat->string (list-ref result 3))))
                            (send bis-result set-value (bigfloat->string (first result)))
                            (send bis-iter set-value (bigfloat->string (list-ref result 1)))
                            (send bis-fpops set-value (bigfloat->string (list-ref result 2)))
-                           (send bis-time set-value (string-append (bigfloat->string (list-ref result 3)) "ms"))
+                           (send bis-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
                            ))))
 (define bis-right (new vertical-panel%
                        [parent bisection-split]
