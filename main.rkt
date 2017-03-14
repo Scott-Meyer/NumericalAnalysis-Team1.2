@@ -350,8 +350,10 @@
                            (define num-iter (string->number (send (send fix-num-iter get-editor) get-text)))
                            (define init-guess (string->number (send (send fix-init-guess get-editor) get-text)))
                            (define in-string (send (send fix-equation get-editor) get-text))
+                           (reset-fp-op)
                            (define result (fixed-point num-iter init-guess (process-string in-string)))
                            (send fix-result set-value (bigfloat->string result))
+                           (send fix-fpops set-value (number->string fp-op))
                            (define fix-func (list->function (strip-bf (process-string in-string))))
                            (plot/dc (list
                                      (function fix-func (- init-guess 10) (+ init-guess 10))
@@ -367,6 +369,9 @@
 (define fix-result (new text-field%
                         [parent fix-right]
                         [label "results"]))
+(define fix-fpops (new text-field%
+                       [parent fix-right]
+                       [label "Floating Point Operations"]))
 (define fix-graph (new canvas%
                        [parent fix-right]))
 
@@ -404,8 +409,10 @@
                             (define num-iter (string->number (send (send newt-num-iter get-editor) get-text)))
                             (define init-guess (string->number (send (send newt-init-guess get-editor) get-text)))
                             (define in-string (send (send newt-equation get-editor) get-text))
+                            (reset-fp-op)
                             (define result (newtons-method num-iter init-guess (process-string in-string)))
                             (send newt-result set-value (bigfloat->string result))
+                            (send newt-fpops set-value (number->string fp-op))
                             (define newt-func (list->function (strip-bf (process-string in-string))))
                             (plot/dc (list
                                       (function newt-func (- init-guess 10) (+ init-guess 10))
@@ -421,6 +428,9 @@
 (define newt-result (new text-field%
                          [parent newt-right]
                          [label "results"]))
+(define newt-fpops (new text-field%
+                       [parent newt-right]
+                       [label "Floating Point Operations"]))
 (define newt-graph (new canvas%
                         [parent newt-right]))
 
@@ -501,11 +511,9 @@
                              (define b (for/list ([x val])
                                          (list(bf (string->number (send (send (list-ref (list-ref gauss-matrix-hor x) val) get-editor) get-text)))))
                                )
-                                                      
-                              
-                             (printf "(gaussian-elim ~a ~a)~n" init-matrix b)
+                             (reset-fp-op)
                              (define result (gaussian-elim init-matrix b))
-                             (printf "result: ~a~n" result)
+                             (send gauss-fpops set-value (number->string fp-op))
                              (for ([x val])
                                (send (list-ref gauss-result-list x) set-value (bigfloat->string  (list-ref result x)))
                                )
@@ -527,6 +535,9 @@
                                  [label (format "x~a=" (add1 x))]
                                  [style '(single deleted)]
                                  )))
+(define gauss-fpops (new text-field%
+                       [parent gauss-right]
+                       [label "Floating Point Operations"]))
 (set-dimensions gauss-init-matrix gauss-matrix-vert 1)
 (set-dimensions gauss-result gauss-result-list 1)
 (for ([x (length gauss-matrix-hor)])
