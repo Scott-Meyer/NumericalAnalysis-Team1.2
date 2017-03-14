@@ -284,12 +284,6 @@
                            (define in-string (send (send bis-equation get-editor) get-text))
                            (define result (bisection num-iter (list init-left init-right) (process-string in-string)))
                            (define split-time (regexp-split #rx"\\." (bigfloat->string (list-ref result 3))))
-<<<<<<< HEAD
-                           (send bis-result set-value (bigfloat->string (first result)))
-                           (send bis-iter set-value (bigfloat->string (list-ref result 1)))
-                           (send bis-fpops set-value (bigfloat->string (list-ref result 2)))
-                           (send bis-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
-=======
                            (send bis-iter set-value (bigfloat->string (list-ref result 1)))
                            (send bis-fpops set-value (bigfloat->string (list-ref result 2)))
                            (send bis-time set-value (string-append (first split-time) "." (if (> 3 (string-length (second split-time))) (second split-time) (substring (second split-time) 0 3)) "ms"))
@@ -302,7 +296,6 @@
                                      (points (list (list (bigfloat->real (first result)) (bis-func (bigfloat->real (first result))))) #:color 'darkgreen #:fill-color 'green #:sym 'fullcircle #:size 12)
                                      )
                                     (send bis-graph get-dc) 0 0 (send bis-graph get-width) (send bis-graph get-height))     
->>>>>>> refs/remotes/origin/Brads-functions
                            ))))
 (define bis-right (new vertical-panel%
                        [parent bisection-split]
@@ -320,11 +313,8 @@
 (define bis-time (new text-field%
                       [parent bis-right]
                       [label "Execution Time"]))
-<<<<<<< HEAD
-=======
 (define bis-graph (new canvas%
                        [parent bis-right]))
->>>>>>> refs/remotes/origin/Brads-functions
 
 ;fixed-point num-iterations tab
 (define b-panel (new panel%
