@@ -34,6 +34,7 @@
 ;given a function x->f(x) and a value pair (x1, x2)
 ;where f(x1)<0<f(x2) OR f(x2)<0<f(x1) return c where f(c)=0
 (define (bisectionProcess iter f x)
+  (set! fp-op 0)
   (define start-time (current-inexact-milliseconds))
   ;Prop function used to determine if the value pair x is correct
   (define (prop? f x)
