@@ -929,10 +929,7 @@
 (set-dimensions sor-init-matrix sor-matrix-vert 2)
 (for ([x (length sor-matrix-hor)])
   (set-dimensions (list-ref sor-matrix-vert x) (list-ref sor-matrix-hor x) 3))
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/remotes/origin/Brads-functions
 
 ;multi-newtons
 (define h-panel (new panel%
