@@ -11,6 +11,7 @@
 ;example:
 ;f(x)=3x^3-1, (-2, 2), 8 iterations
 ;(bisection 8 (list -2 2) (list (list (bf 3) 'x (bf 3)) '- (list (bf 1) 'x 0.bf)))
+;returns form '(x iterations fp-ops exe-time)
 (define (bisection num-iterations initial-guess input-string)
   (define in (list (bf (first initial-guess)) (bf (second initial-guess))))
   (define (fx x)
