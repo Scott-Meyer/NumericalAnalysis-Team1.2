@@ -16,7 +16,6 @@
 ;;returns x in Ax=b
 ; Takes A b (A = '((1 2)(3 4)) b='(8 9))
 (define (gaussian-elim A b)
-  (printf "input ~a ~a" A b)
   (define fA (map flatten A))
   (define fb (flatten b))
   (define AB (map (λ(Ar bx) (append Ar (list bx))) fA fb))
@@ -62,7 +61,7 @@
 (define (add-to-guess guess addit)
   (define ret guess)
   (for ([x (length guess)])
-    (set! ret (list-set ret x (list (list-ref (list-ref guess x) 0) (+ (list-ref (list-ref guess x) 1) (list-ref (list-ref (list-ref addit x) 0) 0)))))
+    (set! ret (list-set ret x (list (list-ref (list-ref guess x) 0) (+ (list-ref (list-ref guess x) 1) (if (list? (list-ref addit x))(caar (list-ref addit x)) (list-ref addit x))))))
     )
   ret
   )
@@ -76,15 +75,15 @@
   )
 
 ;Brad
-(define sys (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
-                  (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
-                  ))
+;(define sys (list (list (list (list (bf 1) 'x (bf 1)) '- (list (bf 1) 'y (bf 3))))
+;                  (list (list (list (bf 1) 'x (bf 2)) '+ (list (bf 1) 'y (bf 2)) '- (list (bf 1))))
+;                  ))
 ;ex. (multi-newtons 7 sys (list (list 'x (bf 1)) (list 'y (bf 2))))
 (define (multi-newtons num-iterations system guess)
   (define x guess)
   (define df (jacobian system))
   (for ([_ num-iterations])
-    (define s (gaussian-elim (augment (apply-matrix df x) (negate-matrix (apply-matrix system x)))))
+    (define s (gaussian-elim (apply-matrix df x) (negate-matrix (apply-matrix system x))))
     (set! x (add-to-guess x s))
     )
   x
