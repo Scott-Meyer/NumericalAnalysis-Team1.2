@@ -93,6 +93,7 @@
   (define x 0)
   (define current-char-int 0)
   (define exponent 0)
+  (define neg #f)
   (define (loop)
     (case state
       [(1) (begin
@@ -114,17 +115,24 @@
              )
            ]
       [(3) (begin
-             (set! current-char-int (- (char->integer (string-ref word x)) (char->integer #\0)))
-             (if (< current-char-int 10)
+             (if (equal? #\- (string-ref word x))
+                 (set! neg #t)
                  (begin
-                   (set! exponent (+ (* exponent 10) current-char-int))
-                   )
-                 (begin
-                   (set! state 1)
-                   (set! x (sub1 x))
-                   (when (equal? exponent 0) (set! exponent 1))
-                   (set! ret (append ret (list (bf exponent))))
-                   (set! exponent 0)
+                   (set! current-char-int (- (char->integer (string-ref word x)) (char->integer #\0)))
+                   (if (< current-char-int 10)
+                       (begin
+                         (set! exponent (+ (* exponent 10) current-char-int))
+                         )
+                       (begin
+                         (set! state 1)
+                         (set! x (sub1 x))
+                         (when (equal? exponent 0) (set! exponent 1))
+                         (when neg (set! exponent (* -1 exponent)))
+                         (set! neg #f)
+                         (set! ret (append ret (list (bf exponent))))
+                         (set! exponent 0)
+                         )
+                       )
                    )
                  )
              )
@@ -136,6 +144,7 @@
   (when (> (string-length word) 0)
     (loop)
     (when (equal? state 3)
+      (when neg (set! exponent (* -1 exponent)))
       (set! ret (append ret (list (bf exponent))))
       )
     (when (equal? state 2) (set! ret (append ret (list (bf 1)))))
@@ -469,8 +478,8 @@
                         [parent newt-right]
                         [label "Backward Error"]))
 (define newt-fpd (new text-field%
-                     [parent newt-right]
-                     [label "Flops per digit of accuracy"]))
+                      [parent newt-right]
+                      [label "Flops per digit of accuracy"]))
 (define newt-graph (new canvas%
                         [parent newt-right]))
 
@@ -585,8 +594,8 @@
                          [parent gauss-right]
                          [label "Floating Point Operations"]))
 (define gauss-fpd (new text-field%
-                     [parent gauss-right]
-                     [label "Flops per digit of accuracy"]))
+                       [parent gauss-right]
+                       [label "Flops per digit of accuracy"]))
 (define gauss-time (new text-field%
                         [parent gauss-right]
                         [label "Execution Time"]))
@@ -1098,8 +1107,8 @@
                          [parent mnewt-right]
                          [label "Floating Point Operations"]))
 (define mnewt-fpd (new text-field%
-                     [parent mnewt-right]
-                     [label "Flops per digit of accuracy"]))
+                       [parent mnewt-right]
+                       [label "Flops per digit of accuracy"]))
 (define mnewt-time (new text-field%
                         [parent mnewt-right]
                         [label "Execution Time"]))
@@ -1233,11 +1242,11 @@
                             [parent broydens-right]
                             [label "Floating Point Operations"]))
 (define broydens-fpd (new text-field%
-                     [parent broydens-right]
-                     [label "Flops per digit of accuracy"]))
+                          [parent broydens-right]
+                          [label "Flops per digit of accuracy"]))
 (define broydens-time (new text-field%
-                        [parent broydens-right]
-                        [label "Execution Time"]))
+                           [parent broydens-right]
+                           [label "Execution Time"]))
 (set-dimensions broydens-functions broydens-functions-list 1)
 (set-dimensions broydens-init-guess broydens-guess-list 1)
 (set-dimensions broydens-result broydens-result-list 1)
