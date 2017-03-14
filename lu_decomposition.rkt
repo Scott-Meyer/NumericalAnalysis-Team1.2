@@ -18,7 +18,6 @@
              ;[L (vector*->array (list->vector (map (λ(x) (for/list ([i (range 0 (length A))]) (if (equal? i x) 1 0))) (range 0 (length A))) vector?))]
              [L (array->mutable-array (make-array (vector n n) 0))]
              [U (array->mutable-array (make-array (vector n n) 0))])
-        (print A2)
         (for* ([j (range 0 (length A))])
           (array-set! L (vector j j) 1)
           (for* ([i (range 0 (add1 j))])
