@@ -512,11 +512,11 @@
 (define gauss-main (new vertical-panel%
                         [parent gauss-split]
                         [alignment '(left top)]
-                        [style '(border)]))
+                        [style '(border auto-hscroll auto-vscroll)]))
 (define gauss-slider (new slider%
                           [label "Number of unknowns:"]
                           [min-value 1]
-                          [max-value 6]
+                          [max-value 20]
                           [parent gauss-main]
                           (callback
                            (lambda (_ ...)
@@ -531,12 +531,12 @@
 (define gauss-init-matrix (new vertical-panel%
                                [parent gauss-main]
                                ))
-(define gauss-matrix-vert (for/list ([_ 6])
+(define gauss-matrix-vert (for/list ([_ 20])
                             (new horizontal-panel%
                                  [parent gauss-init-matrix])
                             ))
 (define gauss-matrix-hor (for/list ([x gauss-matrix-vert])
-                           (for/list([y 7])
+                           (for/list([y 21])
                              (new text-field%
                                   [parent x]
                                   [label #f]
@@ -576,7 +576,7 @@
                              ))))
 (define gauss-right (new vertical-panel%
                          [parent gauss-split]
-                         [style '(border)]
+                         [style '(border auto-vscroll)]
                          [alignment '(center center)]))
 (define gauss-result-label (new message%
                                 [parent gauss-right]
@@ -584,7 +584,7 @@
 (define gauss-result (new vertical-panel%
                           [parent gauss-right]
                           ))
-(define gauss-result-list (for/list ([x 6])
+(define gauss-result-list (for/list ([x 20])
                             (new text-field%
                                  [parent gauss-result]
                                  [label (format "x~a=" (add1 x))]
@@ -618,11 +618,11 @@
 (define lu-main (new vertical-panel%
                      [parent lu-split]
                      [alignment '(left top)]
-                     [style '(border)]))
+                     [style '(border auto-hscroll auto-vscroll)]))
 (define lu-slider (new slider%
                        [label "Size of nXn matrix:"]
                        [min-value 2]
-                       [max-value 6]
+                       [max-value 20]
                        [parent lu-main]
                        (callback
                         (lambda (_ ...)
@@ -645,12 +645,12 @@
 (define lu-init-matrix (new vertical-panel%
                             [parent lu-main]
                             ))
-(define lu-matrix-vert (for/list ([_ 6])
+(define lu-matrix-vert (for/list ([_ 20])
                          (new horizontal-panel%
                               [parent lu-init-matrix])
                          ))
 (define lu-matrix-hor (for/list ([x lu-matrix-vert])
-                        (for/list([y 6])
+                        (for/list([y 20])
                           (new text-field%
                                [parent x]
                                [label #f]
@@ -692,7 +692,7 @@
                           ))))
 (define lu-right (new vertical-panel%
                       [parent lu-split]
-                      [style '(border)]
+                      [style '(border auto-hscroll auto-vscroll)]
                       [alignment '(left center)]))
 (define lu-l-label (new message%
                         [parent lu-right]
@@ -701,12 +701,12 @@
 (define lu-l-matrix (new vertical-panel%
                          [parent lu-right]
                          ))
-(define lu-l-vert (for/list ([_ 6])
+(define lu-l-vert (for/list ([_ 20])
                     (new horizontal-panel%
                          [parent lu-l-matrix])
                     ))
 (define lu-l-hor (for/list ([x lu-l-vert])
-                   (for/list([y 6])
+                   (for/list([y 20])
                      (new text-field%
                           [parent x]
                           [label #f]
@@ -720,12 +720,12 @@
 (define lu-u-matrix (new vertical-panel%
                          [parent lu-right]
                          ))
-(define lu-u-vert (for/list ([_ 6])
+(define lu-u-vert (for/list ([_ 20])
                     (new horizontal-panel%
                          [parent lu-u-matrix])
                     ))
 (define lu-u-hor (for/list ([x lu-u-vert])
-                   (for/list([y 6])
+                   (for/list([y 20])
                      (new text-field%
                           [parent x]
                           [label #f]
@@ -739,12 +739,12 @@
 (define lu-a-matrix (new vertical-panel%
                          [parent lu-right]
                          ))
-(define lu-a-vert (for/list ([_ 6])
+(define lu-a-vert (for/list ([_ 20])
                     (new horizontal-panel%
                          [parent lu-a-matrix])
                     ))
 (define lu-a-hor (for/list ([x lu-a-vert])
-                   (for/list([y 6])
+                   (for/list([y 20])
                      (new text-field%
                           [parent x]
                           [label #f]
@@ -784,7 +784,7 @@
 (define jacobi-main (new vertical-panel%
                          [parent jacobi-split]
                          [alignment '(center center)]
-                         [style '(border)]))
+                         [style '(border auto-hscroll auto-vscroll)]))
 (define jacobi-num-iter (new text-field%
                              [label "Number of iterations:"]
                              [parent jacobi-main]
@@ -792,7 +792,7 @@
 (define jacobi-slider (new slider%
                            [label "Number of unknowns:"]
                            [min-value 2]
-                           [max-value 6]
+                           [max-value 20]
                            [parent jacobi-main]
                            (callback
                             (lambda (_ ...)
@@ -807,7 +807,7 @@
 (define jacobi-init-guess (new vertical-panel%
                                [parent jacobi-main]
                                ))
-(define jacobi-guess-list (for/list ([x 6])
+(define jacobi-guess-list (for/list ([x 20])
                             (new text-field%
                                  [parent jacobi-init-guess]
                                  [label (format "x~a=" x)]
@@ -817,12 +817,12 @@
 (define jacobi-init-matrix (new vertical-panel%
                                 [parent jacobi-main]
                                 ))
-(define jacobi-matrix-vert (for/list ([_ 6])
+(define jacobi-matrix-vert (for/list ([_ 20])
                              (new horizontal-panel%
                                   [parent jacobi-init-matrix])
                              ))
 (define jacobi-matrix-hor (for/list ([x jacobi-matrix-vert])
-                            (for/list([y 7])
+                            (for/list([y 21])
                               (new text-field%
                                    [parent x]
                                    [label #f]
@@ -864,7 +864,7 @@
                               ))))
 (define jacobi-right (new vertical-panel%
                           [parent jacobi-split]
-                          [style '(border)]
+                          [style '(border auto-vscroll)]
                           [alignment '(center center)]))
 (define jacobi-result-label (new message%
                                  [parent jacobi-right]
@@ -872,7 +872,7 @@
 (define jacobi-result (new vertical-panel%
                            [parent jacobi-right]
                            ))
-(define jacobi-result-list (for/list ([x 6])
+(define jacobi-result-list (for/list ([x 20])
                              (new text-field%
                                   [parent jacobi-result]
                                   [label (format "x~a=" x)]
@@ -903,7 +903,7 @@
 (define sor-main (new vertical-panel%
                       [parent sor-split]
                       [alignment '(center center)]
-                      [style '(border)]))
+                      [style '(border auto-hscroll auto-vscroll)]))
 (define sor-num-iter (new text-field%
                           [label "Number of iterations:"]
                           [parent sor-main]
@@ -911,7 +911,7 @@
 (define sor-slider (new slider%
                         [label "Number of unknowns:"]
                         [min-value 2]
-                        [max-value 6]
+                        [max-value 20]
                         [parent sor-main]
                         (callback
                          (lambda (_ ...)
@@ -926,7 +926,7 @@
 (define sor-init-guess (new vertical-panel%
                             [parent sor-main]
                             ))
-(define sor-guess-list (for/list ([x 6])
+(define sor-guess-list (for/list ([x 20])
                          (new text-field%
                               [parent sor-init-guess]
                               [label (format "x~a=" x)]
@@ -936,12 +936,12 @@
 (define sor-init-matrix (new vertical-panel%
                              [parent sor-main]
                              ))
-(define sor-matrix-vert (for/list ([_ 6])
+(define sor-matrix-vert (for/list ([_ 20])
                           (new horizontal-panel%
                                [parent sor-init-matrix])
                           ))
 (define sor-matrix-hor (for/list ([x sor-matrix-vert])
-                         (for/list([y 7])
+                         (for/list([y 21])
                            (new text-field%
                                 [parent x]
                                 [label #f]
@@ -983,7 +983,7 @@
                            ))))
 (define sor-right (new vertical-panel%
                        [parent sor-split]
-                       [style '(border)]
+                       [style '(border auto-vscroll)]
                        [alignment '(center center)]))
 (define sor-result-label (new message%
                               [parent sor-right]
@@ -991,7 +991,7 @@
 (define sor-result (new vertical-panel%
                         [parent sor-right]
                         ))
-(define sor-result-list (for/list ([x 6])
+(define sor-result-list (for/list ([x 20])
                           (new text-field%
                                [parent sor-result]
                                [label (format "x~a=" x)]
@@ -1021,7 +1021,7 @@
 (define mnewt-main (new vertical-panel%
                         [parent mnewt-split]
                         [alignment '(center center)]
-                        [style '(border)]))
+                        [style '(border auto-vscroll)]))
 (define mnewt-num-iter (new text-field%
                             [label "Number of iterations:"]
                             [parent mnewt-main]
@@ -1029,7 +1029,7 @@
 (define mnewt-slider (new slider%
                           [label "Number of unknowns:"]
                           [min-value 1]
-                          [max-value 10]
+                          [max-value 20]
                           [parent mnewt-main]
                           (callback
                            (lambda (_ ...)
@@ -1089,7 +1089,7 @@
                              ))))
 (define mnewt-right (new vertical-panel%
                          [parent mnewt-split]
-                         [style '(border)]
+                         [style '(border auto-vscroll)]
                          [alignment '(center center)]))
 (define mnewt-result-label (new message%
                                 [parent mnewt-right]
@@ -1129,7 +1129,7 @@
 (define broydens-main (new vertical-panel%
                            [parent broydens-split]
                            [alignment '(center center)]
-                           [style '(border)]))
+                           [style '(border auto-hscroll auto-vscroll)]))
 (define broydens-num-iter (new text-field%
                                [label "Number of iterations:"]
                                [parent broydens-main]
@@ -1137,7 +1137,7 @@
 (define broydens-slider (new slider%
                              [label "Number of unknowns:"]
                              [min-value 1]
-                             [max-value 6]
+                             [max-value 20]
                              [parent broydens-main]
                              (callback
                               (lambda (_ ...)
@@ -1153,7 +1153,7 @@
 (define broydens-functions (new vertical-panel%
                                 [parent broydens-main]
                                 ))
-(define broydens-functions-list (for/list ([x 6])
+(define broydens-functions-list (for/list ([x 20])
                                   (new text-field%
                                        [parent broydens-functions]
                                        [label (format "f~a=" (add1 x))]
@@ -1162,7 +1162,7 @@
 (define broydens-init-guess (new vertical-panel%
                                  [parent broydens-main]
                                  ))
-(define broydens-guess-list (for/list ([x 6])
+(define broydens-guess-list (for/list ([x 20])
                               (new text-field%
                                    [parent broydens-init-guess]
                                    [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
@@ -1172,12 +1172,12 @@
 (define broydens-init-matrix (new vertical-panel%
                                   [parent broydens-main]
                                   ))
-(define broydens-matrix-vert (for/list ([_ 6])
+(define broydens-matrix-vert (for/list ([_ 20])
                                (new horizontal-panel%
                                     [parent broydens-init-matrix])
                                ))
 (define broydens-matrix-hor (for/list ([x broydens-matrix-vert])
-                              (for/list([y 6])
+                              (for/list([y 20])
                                 (new text-field%
                                      [parent x]
                                      [label #f]
@@ -1224,7 +1224,7 @@
                                 ))))
 (define broydens-right (new vertical-panel%
                             [parent broydens-split]
-                            [style '(border)]
+                            [style '(border auto-hscroll auto-vscroll)]
                             [alignment '(center center)]))
 (define broydens-result-label (new message%
                                    [parent broydens-right]
@@ -1232,7 +1232,7 @@
 (define broydens-result (new vertical-panel%
                              [parent broydens-right]
                              ))
-(define broydens-result-list (for/list ([x 6])
+(define broydens-result-list (for/list ([x 20])
                                (new text-field%
                                     [parent broydens-result]
                                     [label (format "~a=" (integer->char (+ (char->integer #\a) x)))]
